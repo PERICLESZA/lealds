@@ -1,0 +1,84 @@
+/* index.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: #f5f5f5;
+    /* Cor de fundo da página */
+}
+
+.menu-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #336699;;
+    /* Azul, mesma cor do botão do login */
+    padding: 20px;
+    color: white;
+    height: 100vh;
+    /* Full height */
+    position: fixed;
+}
+
+.sidebar h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    display: block;
+}
+
+.sidebar ul li a:hover {
+    background-color:#4791C5;
+    /* Cor de hover mais escura */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.content {
+    margin-left: 220px;
+    /* Deixe espaço para a barra lateral */
+    padding: 20px;
+    width: 100%;
+}
+
+h1 {
+    color: #333;
+}
+
+.content {
+    margin-left: 220px;
+    /* Mantém espaço para a sidebar */
+    padding: 20px;
+    width: calc(100% - 220px);
+    /* Ajusta o tamanho considerando a sidebar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Centraliza horizontalmente */
+    justify-content: center;
+    /* Centraliza verticalmente */
+    height: 100vh;
+    /* Ocupa toda a altura da tela */
+    text-align: center;
+    /* Alinha o texto no centro */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
