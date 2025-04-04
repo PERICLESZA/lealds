@@ -1,0 +1,88 @@
+/* Reset básico para garantir consistência entre navegadores */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Centraliza o card na tela */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+/* Estilização do container de login */
+.login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+/* Título do formulário */
+.login-container h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Estilização dos labels */
+.login-container label {
+    display: block;
+    text-align: left;
+    margin: 8px 0 4px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Campos de entrada */
+.login-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* Botão de envio */
+.login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #336699;;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Efeito ao passar o mouse no botão */
+.login-container button:hover {
+    background-color: #336699;;
+}
+
+/* Estilização do select para combinar com os inputs */
+.login-container select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    appearance: none;
+    /* Remove a aparência padrão do sistema */
+}
+
+/* Adiciona um ícone de seta para o select */
+.login-container select:focus {
+    outline: none;
+    border-color: #336699;
+}
