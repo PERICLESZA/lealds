@@ -13,59 +13,114 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>Gerenciamento de Clientes</h1>
+        <h1>Customer</h1>
 
         <div class="form-container">
             <div class="cad-group">
                 <div class="input-container">
-                    <label for="name">Nome</label>
+                    <label for="name">Name</label>
                     <input type="text" id="name" placeholder="Digite o nome">
                 </div>
                 <div class="input-container">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="Digite o email">
+                    <label for="fk_idclasscustomer">Class</label>
+                    <select id="fk_idclasscustomer"></select>
                 </div>
                 <div class="input-container">
-                    <label for="phone">Telefone</label>
-                    <input type="text" id="phone" placeholder="Digite o telefone">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" placeholder="Email">
                 </div>
                 <div class="input-container">
-                    <label for="zipcode">CEP</label>
-                    <input type="text" id="zipcode" placeholder="Digite o CEP">
+                    <label for="zipcode">ZipCode</label>
+                    <input type="text" id="zipcode" placeholder="ZipCode">
                 </div>
                 <div class="input-container">
-                    <label for="fk_idcity">Cidade</label>
+                    <label for="fk_idcity">City</label>
                     <select id="fk_idcity"></select>
                 </div>
+            </div>
+            <div class="cad-group">
                 <div class="input-container">
-                    <label for="state">Estado</label>
-                    <input type="text" id="state" placeholder="Digite o estado">
+                    <label for="state">State</label>
+                    <input type="text" id="state" placeholder="State">
                 </div>
                 <div class="input-container">
-                    <label for="dtbirth">Data de Nascimento</label>
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" placeholder="Phone">
+                </div>
+                <div class="input-container">
+                    <label for="Phone2">Phone2</label>
+                    <input type="text" id="state" placeholder="Phone">
+                </div>
+                <div class="input-container">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="Email">
+                </div>
+                <div class="input-container">
+                    <label for="dtbirth">Birthday</label>
                     <input type="date" id="dtbirth">
                 </div>
+            </div>
+            <div class="cad-group">
                 <div class="input-container">
-                    <label for="active">Ativo</label>
+                    <label for="fk_ididentification">Class</label>
+                    <select id="fk_ididentification"></select>
+                </div>
+                <div class="input-container">
+                    <label for="numidentification">Num Id</label>
+                    <input type="text" id="numidentification" placeholder="Num id">
+                </div>
+                <div class="input-container">
+                    <label for="fk_idcustomer">Company</label>
+                    <select id="fk_idcustomer"></select>
+                </div>
+                <div class="input-container">
+                    <label for="comissionpercent">% Comission</label>
+                    <input type="number" id="comissionpercent" placeholder="%">
+                </div>
+                <div class="input-container">
+                    <label for="active">Active</label>
                     <select id="active">
-                        <option value="1">Sim</option>
-                        <option value="0">Não</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
                     </select>
                 </div>
             </div>
-
+            <div class="cad-group">
+                <div class="input-container">
+                    <label for="restriction">Restriction</label>
+                    <select id="restriction">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                </div>
+                <div class="input-container">
+                    <label for="attention">Obs</label>
+                    <input type="text" id="attention" placeholder="Description">
+                </div>
+            </div>
+            <input type="hidden" id="idcustomer">
             <div class="button-group">
                 <button id="saveBtn" onclick="saveCustomer()">Adicionar Cliente</button>
                 <button id="backButton">Voltar ao Menu Principal</button>
             </div>
         </div>
 
+        <div>
+            <h2>Buscar Cliente</h2>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Digite o nome do cliente..."
+                style="width: 300px; padding: 8px; margin-bottom: 20px;">
+
+        </div>
         <div class="table-container">
             <table border="0" class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>Address</th>
                         <th>Email</th>
                         <th>Telefone</th>
                         <th>Cidade</th>
