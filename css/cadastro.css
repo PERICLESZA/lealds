@@ -284,3 +284,12 @@ body {
     box-sizing: border-box;
     background-color: white;
 }
+
+/* Força todos os inputs tipo text a usar caixa alta */
+input[type="text"] {
+    text-transform: uppercase;
+}
+
+.input-container.full-width {
+    flex: 1;
+}

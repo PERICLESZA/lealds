@@ -26,8 +26,8 @@
                     <select id="fk_idclasscustomer"></select>
                 </div>
                 <div class="input-container">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" placeholder="Email">
+                    <label for="andress">Address</label>
+                    <input type="text" id="andress" placeholder="Address">
                 </div>
                 <div class="input-container">
                     <label for="zipcode">ZipCode</label>
@@ -48,8 +48,8 @@
                     <input type="text" id="phone" placeholder="Phone">
                 </div>
                 <div class="input-container">
-                    <label for="Phone2">Phone2</label>
-                    <input type="text" id="state" placeholder="Phone">
+                    <label for="phone2">Phone2</label>
+                    <input type="text" id="phone2" placeholder="Phone">
                 </div>
                 <div class="input-container">
                     <label for="email">Email</label>
@@ -62,7 +62,7 @@
             </div>
             <div class="cad-group">
                 <div class="input-container">
-                    <label for="fk_ididentification">Class</label>
+                    <label for="fk_ididentification">Identification</label>
                     <select id="fk_ididentification"></select>
                 </div>
                 <div class="input-container">
@@ -93,7 +93,7 @@
                         <option value="0">No</option>
                     </select>
                 </div>
-                <div class="input-container">
+                <div class="input-container full-width">
                     <label for="attention">Obs</label>
                     <input type="text" id="attention" placeholder="Description">
                 </div>
@@ -120,7 +120,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Address</th>
                         <th>Email</th>
                         <th>Telefone</th>
                         <th>Cidade</th>

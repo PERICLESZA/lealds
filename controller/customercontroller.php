@@ -21,21 +21,26 @@ switch ($action) {
     case 'search':
         searchCustomers($conn);
         break;
-
+    case 'getCustomer':
+        getCustomerById($conn);
+        break;
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
 
-
 function listCustomers($conn)
 {
     $sql = "SELECT 
-                idcustomer, name, andress, email, phone, fk_idcity, state, active 
+                c.idcustomer, 
+                c.name 
             FROM 
-                customer 
-            WHERE name IS NOT null AND name <> ''
-            ORDER BY LOWER(name) ASC
-            LIMIT 0";
+                customer c
+            LEFT JOIN classcustomer cc ON c.fk_idclasscustomer = cc.idclasscustomer
+            WHERE name IS NOT NULL
+            AND c.name <> ''
+            AND cc.seeincompany = 1
+            ORDER BY name ASC";
+
     $stmt = $conn->query($sql);
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
@@ -172,14 +177,29 @@ function searchCustomers($conn)
     $term = $_GET['term'] ?? '';
 
     $sql = "SELECT 
-                idcustomer, name, andress, email, phone, fk_idcity, state, active 
+                c.idcustomer, 
+                c.name, 
+                cc.description,
+                c.andress, 
+                c.email, 
+                id.nameidentification,
+                -- cp.name,
+                c.phone, 
+                ci.name_city, 
+                c.state, 
+                c.active, 
+                c.fk_idcity 
             FROM 
-                customer 
+                customer c
+            LEFT JOIN city ci ON c.fk_idcity = ci.idcity
+            LEFT JOIN classcustomer cc ON c.fk_idclasscustomer = cc.idclasscustomer
+            LEFT JOIN identification id ON c.fk_ididentification = id.ididentification
+            -- LEFT JOIN customer cp ON c.fk_idcustomer = cp.idcustomer
             WHERE 
-                name LIKE :term 
-                AND name IS NOT NULL 
-                AND name <> ''
-            ORDER BY name ASC";
+                c.name LIKE :term 
+                AND c.name IS NOT NULL 
+                AND c.name <> ''
+            ORDER BY c.name ASC";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute([':term' => "%$term%"]);
@@ -187,3 +207,20 @@ function searchCustomers($conn)
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
+function getCustomerById($conn)
+{
+
+    $idcustomer = $_POST['idcustomer'] ?? null;
+
+    if (!$idcustomer) {
+        echo json_encode(["error" => "ID do cliente não informado"]);
+        return;
+    }
+
+    $stmt = $conn->prepare("SELECT * FROM customer WHERE idcustomer = :id");
+    $stmt->execute([':id' => $idcustomer]);
+    $customer = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    echo json_encode($customer);
+    
+}
