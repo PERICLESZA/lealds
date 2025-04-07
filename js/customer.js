@@ -1,43 +1,60 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetchCustomers();
     fetchSelects();
     fetchCities(); // preenche a lista de cidade
+    fetchClassCustomers(); // preenche a lista de classe do customer
+    fetchIdentifications(); // preenche a lista de identifications
+    fetchCompanies(); // preenche a lista de companias 
     document.getElementById("backButton").addEventListener("click", function () {
         window.location.href = "../view/menuprincipal.php";
     });
 });
-// função para pesquisa por autocomplete
-document.getElementById('searchInput').addEventListener('input', autocompleteCustomer);
 
 let editingCustomerId = null;
 
-function fetchSelects() {
-    fetch('../controller/customercontroller.php?action=getSelectData')
-         .then(res => res.json())
-}
+// função para pesquisa por autocomplete
+document.getElementById('searchInput').addEventListener('input', autocompleteCustomer);
 
-function fetchCustomers() {
-    fetch('../controller/customercontroller.php?action=list')
-        .then(res => res.json())
+function autocompleteCustomer() {
+    const query = document.getElementById('searchInput').value.trim();
+
+    if (query.length < 4) {
+        document.getElementById('customerTable').innerHTML = '';
+        return;
+    }
+
+    fetch(`../controller/customercontroller.php?action=search&term=${encodeURIComponent(query)}`)
+        .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById('customer_data');
             tbody.innerHTML = '';
+
             data.forEach(customer => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${customer.idcustomer}</td>
                     <td>${customer.name}</td>
-                    <td>${customer.andress}</td>
                     <td>${customer.email}</td>
                     <td>${customer.phone}</td>
-                    <td>${customer.city_name}</td>
+                    <td>${customer.name_city || ''}</td> 
                     <td>${customer.state}</td>
                     <td>${customer.active == 1 ? 'Sim' : 'Não'}</td>
-                    <td><button onclick="editCustomer(${customer.idcustomer})">Editar</button></td>
+                    <td class="action-icons">
+                        <a href="#" onclick="editCustomer(${customer.idcustomer})">
+                            <i class="fas fa-edit edit-icon" title="Editar"></i>
+                        </a>
+                        <a href="#" onclick="deleteCustomer(${customer.idcustomer})">
+                            <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
+                        </a>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
         });
+}
+
+function fetchSelects() {
+    fetch('../controller/customercontroller.php?action=getSelectData')
+         .then(res => res.json())
 }
 
 function saveCustomer() {
@@ -68,7 +85,7 @@ function saveCustomer() {
     }
 
     const formData = formDataArray.join('&');
-
+    
     fetch(`../controller/customercontroller.php?action=${action}`, {
         method: 'POST',
         headers: {
@@ -96,30 +113,47 @@ function saveCustomer() {
     });
 }
 
-function editCustomer(id, name, andress, email, fk_idcity, active, phone, state) {
+function editCustomer(id) {
+    fetch('../controller/customercontroller.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'getCustomer',
+                idcustomer: id
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                document.getElementById('name').value = data.name || '';
+                document.getElementById('fk_idclasscustomer').value = data.fk_idclasscustomer || '';
+                document.getElementById('andress').value = data.andress || '';
+                document.getElementById('zipcode').value = data.zipcode || '';
+                document.getElementById('fk_idcity').value = data.fk_idcity || '';
+                document.getElementById('state').value = data.state || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('phone2').value = data.phone2 || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('dtbirth').value = data.dtbirth || '';
+                document.getElementById('fk_ididentification').value = data.fk_ididentification || '';
+                document.getElementById('numidentification').value = data.numidentification || '';
+                document.getElementById('fk_idcustomer').value = data.fk_idcustomer || '';
+                document.getElementById('comissionpercent').value = data.comissionpercent || '';
+                document.getElementById('active').value = data.active || '';
+                document.getElementById('restriction').value = data.restriction || '';
+                document.getElementById('attention').value = data.attention || '';
 
-    // Preenche os campos do formulário com os dados recebidos
-    document.getElementById('name').value = name;
-    // document.getElementById('fk_idclasscustomer').value = data.fk_idclasscustomer;
-    document.getElementById('address').value = andress;
-    // document.getElementById('zipcode').value = data.zipcode;
-    document.getElementById('fk_idcity').value = fk_idcity;
-    document.getElementById('state').value = state;
-    document.getElementById('phone').value = phone;
-    // document.getElementById('phone2').value = data.phone2;
-    document.getElementById('email').value = email;
-    // document.getElementById('dtbirth').value = data.dtbirth;
-    // document.getElementById('fk_ididentification').value = data.fk_ididentification;
-    // document.getElementById('numidentification').value = data.numidentification;
-    // document.getElementById('fk_idcustomer').value = data.fk_idcustomer;
-    // document.getElementById('comissionpercent').value = data.comissionpercent;
-    document.getElementById('active').value = active;
-    // document.getElementById('restriction').value = data.restriction;
-    // document.getElementById('attention').value = data.attention;
-
-    document.getElementById("saveBtn").textContent = "Salvar Alteração";
-    editingCustomerId = id;
-
+                document.getElementById("saveBtn").textContent = "Salvar Alteração";
+                editingCustomerId = id;
+            } else {
+                alert("Cliente não encontrado.");
+            }
+        })
+        .catch(error => {
+            console.error("Erro ao buscar dados do cliente:", error);
+        });
 }
 
 function deleteCustomer(id) {
@@ -183,7 +217,6 @@ function updateCustomer() {
     });
 }
 
-
 // busca as cidades para carragar na caixa de listagem
 function fetchCities() {
     fetch('../controller/citycontroller.php?action=list')
@@ -198,44 +231,57 @@ function fetchCities() {
                 selectCity.appendChild(option);
             });
         })
-        .catch(error => console.error('Erro ao buscar cidades:', error));
+        .catch(error => console.error('Erro ao buscar cidades:', error)
+    );
 }
 
-function autocompleteCustomer() {
-    const query = document.getElementById('searchInput').value.trim();
-
-    if (query.length < 4) {
-        document.getElementById('customerTable').innerHTML = '';
-        return;
-    }
-
-    fetch(`../controller/customercontroller.php?action=search&term=${encodeURIComponent(query)}`)
-        .then(response => response.json())
-        .then(data => {
-            const tbody = document.getElementById('customer_data');
-            tbody.innerHTML = '';
-
-            data.forEach(customer => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${customer.idcustomer}</td>
-                    <td>${customer.name}</td>
-                    <td>${customer.andress}</td>
-                    <td>${customer.email}</td>
-                    <td>${customer.phone}</td>
-                    <td>${customer.name_city}</td>
-                    <td>${customer.state}</td>
-                    <td>${customer.active == 1 ? 'Sim' : 'Não'}</td>
-                    <td class="action-icons">
-                        <a href="#" onclick="editCustomer(${customer.idcustomer}, '${customer.name}', '${customer.andress}', '${customer.email}', '${customer.fk_idcity}', '${customer.active}', '${customer.phone}', '${customer.state}')">
-                            <i class="fas fa-edit edit-icon" title="Editar"></i>
-                        </a>
-                        <a href="#" onclick="deleteCustomer(${customer.idcustomer})">
-                            <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
-                        </a>
-                    </td>
-                `;
-                tbody.appendChild(tr);
+function fetchClassCustomers() {
+    fetch('../controller/classcustomercontroller.php?action=list')
+        .then(res => res.json())
+        .then(classcustomers => {
+            const selectClassCustomer = document.getElementById('fk_idclasscustomer');
+            selectClassCustomer.innerHTML = '<option value="">Selecione a Classe</option>';
+            classcustomers.forEach(classcustomer => {
+                const option = document.createElement('option');
+                option.value = classcustomer.idclasscustomer;
+                option.textContent = classcustomer.description;
+                selectClassCustomer.appendChild(option);
             });
-        });
+        })
+        .catch(error => console.error('Erro ao buscar class:', error)
+    );
+}
+
+function fetchIdentifications() {
+    fetch('../controller/idcontroller.php?action=list')
+        .then(res => res.json())
+        .then(identifications => {
+            const selectIdentification = document.getElementById('fk_ididentification');
+            selectIdentification.innerHTML = '<option value="">Select Identification</option>';
+            identifications.forEach(identification => {
+                const option = document.createElement('option');
+                option.value = identification.ididentification;
+                option.textContent = identification.nameidentification;
+                selectIdentification.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error seeking Identification:', error)
+    );
+}
+
+function fetchCompanies() {
+    fetch('../controller/customercontroller.php?action=list')
+        .then(res => res.json())
+        .then(companies => {
+            const selectCompany = document.getElementById('fk_idcustomer');
+            selectCompany.innerHTML = '<option value="">Select Company</option>';
+            companies.forEach(company => {
+                const option = document.createElement('option');
+                option.value = company.idcustomer;
+                option.textContent = company.name;
+                selectCompany.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error seeking Identification:', error)
+    );
 }
