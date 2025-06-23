@@ -38,6 +38,7 @@ $nmstore = isset($_SESSION['nmstore']) ? $_SESSION['nmstore'] : 'Nenhuma loja se
                 <li><a href="classcustomer.php">Class Customer</a></li>
                 <li><a href="user.php">User</a></li>
                 <li><a href="customer.php">Customer</a></li>
+                <li><a href="pessoa.php">Pessoa</a></li>
                 <br><br>
                 <a href="../controller/logout.php">Logout</a>
             </ul>

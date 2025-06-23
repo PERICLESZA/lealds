@@ -118,6 +118,7 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
+                        <th>Edit</th>
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Email</th>
@@ -125,7 +126,7 @@
                         <th>Cidade</th>
                         <th>Estado</th>
                         <th>Ativo</th>
-                        <th>Ações</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="customer_data"></tbody>
