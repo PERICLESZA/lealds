@@ -20,8 +20,11 @@
             <div class="form-container">
                 <div class="cad-group">
                     <div class="input-container">
-                        <label for="searchInput">Phone No/Name</label>
-                        <input type="text" id="searchInput" placeholder="Input phone/name...">
+                        <label for="searchInput">Phone No/name:</label>
+                        <input type="text" id="searchInput" name="searchInput" autocomplete="on" />
+                        <input type="hidden" id="idcustomer" name="idcustomer" />
+                        <datalist id="customerList"></datalist>
+                        <div>Cliente selecionado: <span id="selectedCustomerName"></span></div>
                     </div>
                     <div class="input-container">
                         <label for="fk_idcustomer">Company</label>
