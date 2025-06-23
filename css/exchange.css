@@ -1,0 +1,22 @@
+.form-image-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.form-container {
+    flex: 1 1 300px;
+    min-width: 280px;
+}
+
+.image-container {
+    flex: 0 0 auto;
+}
+
+.customer-image {
+    width: 250px;
+    height: auto;
+    border-radius: 8px;
+}

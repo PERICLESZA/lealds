@@ -293,3 +293,19 @@ input[type="text"] {
 .input-container.full-width {
     flex: 1;
 }
+
+.image-container {
+    width: 200px;
+}
+
+.customer-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* Se um .cad-group tiver apenas UM .input-container, ele ocupará 100% */
+.cad-group:has(.input-container:only-child) .input-container {
+    width: 100%;
+}
