@@ -40,7 +40,7 @@
                     </div>
                     <div class="input-container">
                         <label>Time</label>
-                        <input type="text" id="tchalow" />
+                        <input type="text" id="tchaflow" />
                     </div>
                     <div class="input-container">
                         <label for="fk_idbankmaster">Our Bank</label>
