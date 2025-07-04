@@ -77,6 +77,7 @@ function handleCustomerSelection(inputValue, customers, hiddenInput, outputSpan)
   if (selected) {
     hiddenInput.value = selected.idcustomer;
     outputSpan.textContent = selected.name;
+    preencherDataHoraAtual();
     console.log("Cliente selecionado:", selected);
   } else {
     hiddenInput.value = '';
@@ -124,7 +125,10 @@ function insertCashflow() {
   const dtcashflow = document.getElementById('dtcashflow')?.value;
   const fk_idcustomer = document.getElementById('idcustomer')?.value;
   const fk_idbankmaster = 2;
-
+  const tchaflow = document.getElementById('tchaflow')?.value;
+  
+  formData.append('tchalow', tchaflow);
+  
   if (!value || !dtcashflow || !fk_idcustomer || !fk_idbankmaster) {
     alert('Preencha todos os campos obrigatórios.');
     return;
@@ -175,4 +179,21 @@ function enableInsertOnEnter() {
           insertCashflow();
       }
   });
+}
+
+/**
+ * Preenche os campos de data e hora com os valores atuais
+ */
+function preencherDataHoraAtual() {
+  const hoje = new Date();
+
+  const dataFormatada = hoje.toISOString().slice(0, 10); // yyyy-mm-dd
+  const horaFormatada = hoje.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+
+  document.getElementById('dtcashflow').value = dataFormatada;
+  document.getElementById('tchaflow').value = horaFormatada;
 }

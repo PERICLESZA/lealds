@@ -97,8 +97,8 @@ function insertCashflow(PDO $conn, array $data): bool
 {
     $stmt = $conn->prepare("
         INSERT INTO cashflow 
-        (valueflow, centsflow, valuepercentflow, cents2flow, percentflow, totalflow, totaltopay, dtcashflow, fk_idcustomer, fk_idbankmaster)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (valueflow, centsflow, valuepercentflow, cents2flow, percentflow, totalflow, totaltopay, dtcashflow, tchaflow, fk_idcustomer, fk_idbankmaster)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     return $stmt->execute([
@@ -110,9 +110,11 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['totalflow'],
         $data['totaltopay'],
         $data['dtcashflow'],
+        $data['tchaflow'],
         $data['fk_idcustomer'],
         $data['fk_idbankmaster']
     ]);
+
 }
 
 // 🚀 Função principal que trata a action 'insert'
@@ -126,6 +128,7 @@ function handleInsertCashflow(PDO $conn): void
     $cashflowData['dtcashflow'] = $_POST['dtcashflow'] ?? null;
     $cashflowData['fk_idcustomer'] = $_POST['fk_idcustomer'] ?? null;
     $cashflowData['fk_idbankmaster'] = $_POST['fk_idbankmaster'] ?? null;
+    $cashflowData['tchaflow'] = $_POST['tchaflow'] ?? null;
 
     $success = insertCashflow($conn, $cashflowData);
 
