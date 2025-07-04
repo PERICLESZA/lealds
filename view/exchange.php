@@ -56,8 +56,8 @@
                     </div>
                 </div>
                 <div class="input-container">
-                    <label>Value</label>
-                    <input type="text" />
+                    <label for="valueInput">Value</label>
+                    <input type="text" id="valueInput"/>
                 </div>
                 <!-- Imagem
                 <div class="image-container">
