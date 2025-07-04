@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   initAutocomplete();
+  enableInsertOnEnter();
 });
 
 /**
@@ -113,4 +114,65 @@ function updateCashflowTable(data) {
 function clearCashflowTable() {
   const tbody = document.getElementById('customer_data');
   tbody.innerHTML = '';
+}
+
+/**
+ * Envia os dados do formulário para o controller e insere um novo cashflow.
+ */
+function insertCashflow() {
+  const value = parseFloat(document.getElementById('valueInput')?.value || 0);
+  const dtcashflow = document.getElementById('dtcashflow')?.value;
+  const fk_idcustomer = document.getElementById('idcustomer')?.value;
+  const fk_idbankmaster = 2;
+
+  if (!value || !dtcashflow || !fk_idcustomer || !fk_idbankmaster) {
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const formData = new URLSearchParams();
+  formData.append('action', 'insert');
+  formData.append('value', value);
+  formData.append('dtcashflow', dtcashflow);
+  formData.append('fk_idcustomer', fk_idcustomer);
+  formData.append('fk_idbankmaster', fk_idbankmaster);
+
+  fetch('../controller/exchangeController.php', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        // alert('Cashflow inserido com sucesso!');
+        document.getElementById('valueInput').value = '';
+        document.getElementById('valueInput').focus();
+
+        fetchCashflowData(fk_idcustomer)
+          .then(updateCashflowTable)
+          .catch(err => console.error('Erro ao atualizar tabela:', err));
+      } else {
+        console.error('Erro ao inserir:', result);
+        alert('Erro ao inserir o registro.');
+      }
+    })
+    .catch(error => {
+      console.error('Erro na requisição:', error);
+      alert('Falha na comunicação com o servidor.');
+    });
+}
+
+/**
+ * Escuta o campo "Value" e insere automaticamente ao pressionar Enter
+ */
+function enableInsertOnEnter() {
+  const valueInput = document.getElementById('valueInput');
+  if (!valueInput) return;
+
+  valueInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+          event.preventDefault(); // Evita envio de formulário ou comportamento inesperado
+          insertCashflow();
+      }
+  });
 }
