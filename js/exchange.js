@@ -14,7 +14,8 @@ function loadExchangePercent() {
   fetch('../controller/exchangeController.php?action=exchangepercent')
     .then(res => res.json())
     .then(data => {
-      exchangePercent = parseFloat(data.percent) || 0;
+      console.log(data);
+      exchangePercent = parseFloat(data) || 0;
       console.log('Percent carregado:', exchangePercent);
     });
 }
