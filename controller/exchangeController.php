@@ -21,6 +21,9 @@ switch ($action) {
     case 'wire_value':
         echo getWireValue($conn);
         break;
+    case 'exchangepercent':
+        echo getExchangeComission($conn);
+        break;
     case 'calculate':
         $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
         $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
