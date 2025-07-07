@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-    loadExchangePercent().then(() => {
-      enableInsertOnEnter(); // só chama quando o valor já foi carregado
-    });
-    initAutocomplete();
-    initCustomerAutocomplete();
-    initBankAutocomplete();
-    loadWireValue();
+  initAutocomplete();
+  initCustomerAutocomplete();
+  initBankAutocomplete();
+  loadWireValue();
     // enableCalculationOnInput();
+
+  loadExchangePercent().then(() => {
+    console.log('exchangePercent pronto, iniciando insert listener');
+    enableInsertOnEnter();
+  });
 });
 
 
@@ -17,11 +19,12 @@ function loadExchangePercent() {
   return fetch('../controller/exchangeController.php?action=exchangepercent')
     .then(res => res.json())
     .then(data => {
-      exchangePercent = parseFloat(data) || 0;
+      const pct = parseFloat(data.percent);
+      exchangePercent = isNaN(pct) ? 0 : pct;
       console.log('Percent carregado:', exchangePercent);
     })
     .catch(err => {
-      console.error('Erro ao carregar exchangePercent:', err);
+      console.error('Erro ao carregar percent:', err);
       exchangePercent = 0;
     });
 }
@@ -242,6 +245,8 @@ function enableInsertOnEnter() {
       event.preventDefault(); // evita comportamento padrão
 
       const valor = parseFloat(valueInput.value.replace(',', '.'));
+      console.log('Tecla detectada, valor:', valor, 'percent:', exchangePercent);
+
       if (isNaN(valor)) {
         alert('Digite um valor válido.');
         return;
@@ -250,6 +255,7 @@ function enableInsertOnEnter() {
       calculateCashflowValues(valor, percent)
         .then(result => {
           if (!result) {
+            console.log('Resultado do cálculo:', result);
             alert('Erro ao validar valores.');
             return;
           }
