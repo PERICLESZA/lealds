@@ -24,12 +24,12 @@ switch ($action) {
     case 'exchangepercent':
         $p = getExchangeComission($conn);      // ou PDO dependendo da configuração
         echo json_encode(['percent' => $p]);
-        exit;
+        break;
     case 'calculate':
-        $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
-        $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
+        $value = floatval($_POST['value'] ??  0);
+        $percent = floatval($_POST['percent'] ?? 0);
         echo json_encode(calculateCashflowValues($value, $percent));
-        exit;
+        break;
 
     default:
         echo json_encode(["error" => "Ação inválida"]);

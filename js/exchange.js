@@ -1,21 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadExchangePercent();
+  enableInsertOnEnter(); // Só ativa depois de carregar o percent
+  // os outros:
   initAutocomplete();
   initCustomerAutocomplete();
   initBankAutocomplete();
   loadWireValue();
-    // enableCalculationOnInput();
-
-  loadExchangePercent().then(() => {
-    console.log('exchangePercent pronto, iniciando insert listener');
-    enableInsertOnEnter();
-  });
 });
-
 
 // Busca o percentual poadrão de desconto por cheque
 let exchangePercent = 0;
 
-function loadExchangePercent() {
+async function loadExchangePercent() {
   return fetch('../controller/exchangeController.php?action=exchangepercent')
     .then(res => res.json())
     .then(data => {
@@ -252,7 +248,7 @@ function enableInsertOnEnter() {
         return;
       }
 
-      calculateCashflowValues(valor, percent)
+      calculateCashflowValues(valor, exchangePercent)
         .then(result => {
           if (!result) {
             console.log('Resultado do cálculo:', result);
@@ -261,9 +257,13 @@ function enableInsertOnEnter() {
           }
 
           // Atualiza com os valores corretos
-          document.getElementById('totalflow').value = result.totalflow.toFixed(2);
-          document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
-
+          if (result && result.totalflow && result.totaltopay) {
+            document.getElementById('totalflow').value = result.totalflow.toFixed(2);
+            document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
+          } else {
+            console.warn('Valores inválidos retornados:', result);
+          }
+          
           // Agora inserimos o registro
           insertCashflow(result);
         });
