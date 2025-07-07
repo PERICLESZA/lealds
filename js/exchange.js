@@ -2,11 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
   initAutocomplete();
   initCustomerAutocomplete(); //  autocomplete para Customer
   initBankAutocomplete();      // autocomplete para bancos
+  loadExchangePercent();
   enableInsertOnEnter();
   enableCalculationOnInput();
   loadWireValue(); // busca valor padrão do wire
 });
 
+let exchangePercent = 0;
+
+function loadExchangePercent() {
+  fetch('../controller/exchangeController.php?action=exchangepercent')
+    .then(res => res.json())
+    .then(data => {
+      exchangePercent = parseFloat(data.percent) || 0;
+      console.log('Percent carregado:', exchangePercent);
+    });
+}
 /**
  * Inicializa o autocomplete no campo de busca.
  */
@@ -229,7 +240,6 @@ function insertCashflow(calculated) {
  */
 function enableInsertOnEnter() {
   const valueInput = document.getElementById('valueInput');
-  const percent = 10;
 
   if (!valueInput) return;
 
@@ -239,7 +249,7 @@ function enableInsertOnEnter() {
 
       const valor = parseFloat(valueInput.value);
       if (!isNaN(valor)) {
-        calculateCashflowValues(valor, percent)
+        calculateCashflowValues(valor, exchangePercent)
           .then(result => {
             if (result) {
               // Chama o insert com os valores já calculados
@@ -385,11 +395,12 @@ function loadWireValue() {
  * @param {number} percent - percentual aplicado
  * @returns {Promise<object>} - resultado dos cálculos vindo do PHP
  */
-function calculateCashflowValues(value, percent) {
+function calculateCashflowValues(value, exchangePercent) {
+  console.log('Chamando cálculo PHP com:', { value, exchangePercent });
   const params = new URLSearchParams();
   params.append('action', 'calculate');
   params.append('value', value);
-  params.append('percent', percent);
+  params.append('percent', exchangePercent);
 
   return fetch(`../controller/exchangeController.php`, {
     method: 'POST',
