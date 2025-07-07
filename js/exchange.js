@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initBankAutocomplete();      // autocomplete para bancos
   loadExchangePercent();
   enableInsertOnEnter();
-  enableCalculationOnInput();
+  // enableCalculationOnInput();
   loadWireValue(); // busca valor padrão do wire
 });
 
@@ -188,76 +188,72 @@ function clearCashflowTable() {
  * Envia os dados do formulário para o controller e insere um novo cashflow.
  */
 function insertCashflow(calculated) {
-  const value = parseFloat(document.getElementById('valueInput')?.value || 0);
-  const dtcashflow = document.getElementById('dtcashflow')?.value;
-  const fk_idcustomer = document.getElementById('idcustomer')?.value;
-  const fk_idcompany = document.getElementById('fk_idcustomer')?.value;
-  const fk_idbankmaster = document.getElementById('fk_idbankmaster')?.value || 2;
-  const tchaflow = document.getElementById('tchaflow')?.value;
+  const value = calculated.valueflow;
+  const dtcashflow = document.getElementById('dtcashflow').value;
+  const fk_idcustomer = document.getElementById('idcustomer').value;
+  const fk_idbankmaster = document.getElementById('fk_idbankmaster').value;
+  const tchaflow = document.getElementById('tchaflow').value;
 
-  if (!value || !dtcashflow || !fk_idcustomer || !fk_idbankmaster) {
-    alert('Preencha todos os campos obrigatórios.');
-    return;
-  }
-
-  // Atualiza os campos na tela com o cálculo do backend
-  document.getElementById('totalflow').value = calculated.totalflow.toFixed(2);
-  document.getElementById('totaltopay').value = calculated.totaltopay.toFixed(2);
-
-  const formData = new URLSearchParams();
-  formData.append('action', 'insert');
-  formData.append('value', value);
-  formData.append('dtcashflow', dtcashflow);
-  formData.append('tchaflow', tchaflow);
-  formData.append('fk_idcustomer', fk_idcustomer);
-  formData.append('fk_idbankmaster', fk_idbankmaster);
+  const formData = new URLSearchParams({
+    action: 'insert',
+    value,
+    dtcashflow,
+    tchaflow,
+    fk_idcustomer,
+    fk_idbankmaster
+  });
 
   fetch('../controller/exchangeController.php', {
     method: 'POST',
     body: formData
   })
-  .then(response => response.json())
-  .then(result => {
-    if (result.success) {
-      document.getElementById('valueInput').value = '';
-      document.getElementById('valueInput').focus();
-
-      fetchCashflowData(fk_idcustomer)
-        .then(updateCashflowTable)
-        .catch(err => console.error('Erro ao atualizar tabela:', err));
-    } else {
-      console.error('Erro ao inserir:', result);
-      alert('Erro ao inserir o registro.');
-    }
-  })
-  .catch(error => {
-    console.error('Erro na requisição:', error);
-    alert('Falha na comunicação com o servidor.');
-  });
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        valueInput.value = '';
+        valueInput.focus();
+        fetchCashflowData(fk_idcustomer).then(updateCashflowTable);
+      } else {
+        alert('Não foi possível inserir.');
+      }
+    })
+    .catch(() => alert('Erro na requisição.'));
 }
+
 
 /**
  * Escuta o campo "Value" e insere automaticamente ao pressionar Enter
  */
 function enableInsertOnEnter() {
   const valueInput = document.getElementById('valueInput');
+  const percent = exchangePercent; // carregado via loadExchangePercent()
 
   if (!valueInput) return;
 
   valueInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' || event.key === 'Tab') {
-      event.preventDefault(); // Evita o comportamento padrão
+      event.preventDefault(); // evita comportamento padrão
 
-      const valor = parseFloat(valueInput.value);
-      if (!isNaN(valor)) {
-        calculateCashflowValues(valor, exchangePercent)
-          .then(result => {
-            if (result) {
-              // Chama o insert com os valores já calculados
-              insertCashflow(result);
-            }
-          });
+      const valor = parseFloat(valueInput.value.replace(',', '.'));
+      if (isNaN(valor)) {
+        alert('Digite um valor válido.');
+        return;
       }
+
+      calculateCashflowValues(valor, percent)
+        .then(result => {
+          if (!result) {
+            alert('Erro ao validar valores.');
+            return;
+          }
+
+          // Atualiza com os valores corretos
+          document.getElementById('totalflow').value = result.totalflow.toFixed(2);
+          document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
+
+          // Agora inserimos o registro
+          insertCashflow(result);
+        });
     }
   });
 }
@@ -414,20 +410,20 @@ function calculateCashflowValues(value, exchangePercent) {
   });
 }
 
-function enableCalculationOnInput() {
-  const valueInput = document.getElementById('valueInput');
-  const percent = 10; // OU PEGUE DE OUTRO CAMPO, se for dinâmico
+// function enableCalculationOnInput() {
+//   const valueInput = document.getElementById('valueInput');
+//   const percent = 10; // OU PEGUE DE OUTRO CAMPO, se for dinâmico
 
-  valueInput.addEventListener('blur', () => {
-    const valor = parseFloat(valueInput.value);
-    if (isNaN(valor)) return;
+//   valueInput.addEventListener('blur', () => {
+//     const valor = parseFloat(valueInput.value);
+//     if (isNaN(valor)) return;
 
-    calculateCashflowValues(valor, percent)
-      .then(result => {
-        if (result) {
-          document.getElementById('totalflow').value = result.totalflow.toFixed(2);
-          document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
-        }
-      });
-  });
-}
+//     calculateCashflowValues(valor, percent)
+//       .then(result => {
+//         if (result) {
+//           document.getElementById('totalflow').value = result.totalflow.toFixed(2);
+//           document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
+//         }
+//       });
+//   });
+// }
