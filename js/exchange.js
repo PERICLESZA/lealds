@@ -1,24 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
-  initAutocomplete();
-  initCustomerAutocomplete(); //  autocomplete para Customer
-  initBankAutocomplete();      // autocomplete para bancos
-  loadExchangePercent();
-  enableInsertOnEnter();
-  // enableCalculationOnInput();
-  loadWireValue(); // busca valor padrão do wire
+    loadExchangePercent().then(() => {
+      enableInsertOnEnter(); // só chama quando o valor já foi carregado
+    });
+    initAutocomplete();
+    initCustomerAutocomplete();
+    initBankAutocomplete();
+    loadWireValue();
+    // enableCalculationOnInput();
 });
 
+
+// Busca o percentual poadrão de desconto por cheque
 let exchangePercent = 0;
 
 function loadExchangePercent() {
-  fetch('../controller/exchangeController.php?action=exchangepercent')
+  return fetch('../controller/exchangeController.php?action=exchangepercent')
     .then(res => res.json())
     .then(data => {
-      console.log(data);
       exchangePercent = parseFloat(data) || 0;
       console.log('Percent carregado:', exchangePercent);
+    })
+    .catch(err => {
+      console.error('Erro ao carregar exchangePercent:', err);
+      exchangePercent = 0;
     });
 }
+
 /**
  * Inicializa o autocomplete no campo de busca.
  */
@@ -392,22 +399,23 @@ function loadWireValue() {
  * @param {number} percent - percentual aplicado
  * @returns {Promise<object>} - resultado dos cálculos vindo do PHP
  */
-function calculateCashflowValues(value, exchangePercent) {
+async function calculateCashflowValues(value, exchangePercent) {
   console.log('Chamando cálculo PHP com:', { value, exchangePercent });
   const params = new URLSearchParams();
   params.append('action', 'calculate');
   params.append('value', value);
   params.append('percent', exchangePercent);
 
-  return fetch(`../controller/exchangeController.php`, {
-    method: 'POST',
-    body: params
-  })
-  .then(res => res.json())
-  .catch(err => {
+  try {
+    const res = await fetch(`../controller/exchangeController.php`, {
+      method: 'POST',
+      body: params
+    });
+    return await res.json();
+  } catch (err) {
     console.error('Erro ao calcular valores no backend:', err);
     return null;
-  });
+  }
 }
 
 // function enableCalculationOnInput() {
