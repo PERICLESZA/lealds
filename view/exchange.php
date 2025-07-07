@@ -31,8 +31,10 @@
             <div class="form-container">
                 <div class="cad-group">
                     <div class="input-container">
-                        <label for="fk_idcustomer">Company</label>
-                        <select id="fk_idcustomer"></select>
+                        <label for="searchCustomer">Company:</label>
+                        <input type="text" id="searchCustomer" list="customerList2" autocomplete="off" />
+                        <input type="hidden" id="fk_idcustomer" name="fk_idcustomer" />
+                        <datalist id="customerList2"></datalist>
                     </div>
                     <div class="input-container">
                         <label>Date</label>
@@ -43,21 +45,24 @@
                         <input type="text" id="tchaflow" />
                     </div>
                     <div class="input-container">
-                        <label for="fk_idbankmaster">Our Bank</label>
-                        <select id="fk_idbankmaster"></select>
+                        <label for="searchBank">Our Bank:</label>
+                        <input type="text" id="searchBank" list="bankList" autocomplete="off" />
+                        <input type="hidden" id="fk_idbankmaster" name="fk_idbankmaster" />
+                        <datalist id="bankList"></datalist>
                     </div>
                     <div class="input-container">
                         <label>Pay</label>
-                        <input type="text" />
+                        <input type="text" id="totaltopay" tabindex="-1" disabled />
                     </div>
                     <div class="input-container">
                         <label>Receive</label>
-                        <input type="text" />
+                        <input type="text" id="totalflow" tabindex="-1" disabled />
                     </div>
+
                 </div>
                 <div class="input-container">
                     <label for="valueInput">Value</label>
-                    <input type="text" id="valueInput"/>
+                    <input type="text" id="valueInput" />
                 </div>
                 <!-- Imagem
                 <div class="image-container">

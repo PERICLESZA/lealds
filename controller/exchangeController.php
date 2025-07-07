@@ -9,17 +9,47 @@ switch ($action) {
     case 'search':
         searchCustomer($conn);
         break;
-
     case 'cashflow':
         getCashflowByCustomer($conn);
         break;
-
     case 'insert':
         handleInsertCashflow($conn);
         break;
+    case 'search_bank':
+        searchBank($conn);
+        break;
+    case 'wire_value':
+        echo getWireValue($conn);
+        break;
+    case 'calculate':
+        $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
+        $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
+        echo json_encode(calculateCashflowValues($value, $percent));
+        exit;
 
     default:
         echo json_encode(["error" => "Ação inválida"]);
+}
+
+function getWireValue($conn)
+{
+    $stmt = $conn->query("SELECT exchange_vl_wire FROM parameters LIMIT 1");
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return json_encode(['wire' => $result['exchange_vl_wire'] ?? 0]);
+}
+
+function searchBank($conn)
+{
+    $term = $_GET['term'] ?? '';
+    $sql = "SELECT idbank, namebank
+            FROM bank
+            WHERE namebank LIKE :term
+            ORDER BY namebank ASC
+            LIMIT 10";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([':term' => "%$term%"]);
+    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
 // 🔍 Busca clientes por nome ou telefone
