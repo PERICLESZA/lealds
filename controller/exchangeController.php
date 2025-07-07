@@ -22,8 +22,9 @@ switch ($action) {
         echo getWireValue($conn);
         break;
     case 'exchangepercent':
-        echo getExchangeComission($conn);
-        break;
+        $p = getExchangeComission($conn);      // ou PDO dependendo da configuração
+        echo json_encode(['percent' => $p]);
+        exit;
     case 'calculate':
         $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
         $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
