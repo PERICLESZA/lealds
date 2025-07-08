@@ -51,12 +51,12 @@
                         <datalist id="bankList"></datalist>
                     </div>
                     <div class="input-container">
-                        <label>Pay</label>
-                        <input id="totaltopay" disabled />
+                        <label>Receive</label>
+                        <input type="text" id="totalflow" tabindex="-1" disabled />
                     </div>
                     <div class="input-container">
-                        <label>Receive</label>
-                        <input  id="totalflow"  disabled />
+                        <label>Pay</label>
+                        <input type="text" id="totaltopay" tabindex="-1" disabled />
                     </div>
 
                 </div>
