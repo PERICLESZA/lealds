@@ -52,11 +52,11 @@
                     </div>
                     <div class="input-container">
                         <label>Pay</label>
-                        <input type="text" id="totaltopay" tabindex="-1" disabled />
+                        <input id="totaltopay" disabled />
                     </div>
                     <div class="input-container">
                         <label>Receive</label>
-                        <input type="text" id="totalflow" tabindex="-1" disabled />
+                        <input  id="totalflow"  disabled />
                     </div>
 
                 </div>

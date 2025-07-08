@@ -26,9 +26,11 @@ switch ($action) {
         echo json_encode(['percent' => $p]);
         break;
     case 'calculate':
-        $value = floatval($_POST['value'] ??  0);
-        $percent = floatval($_POST['percent'] ?? 0);
-        echo json_encode(calculateCashflowValues($value, $percent));
+        $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
+        $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
+        $result = calculateCashflowValues($value, $percent);
+        header('Content-Type: application/json');
+        echo json_encode($result);
         break;
 
     default:

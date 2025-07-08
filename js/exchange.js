@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  await loadExchangePercent();
-  enableInsertOnEnter(); // Só ativa depois de carregar o percent
-  // os outros:
   initAutocomplete();
   initCustomerAutocomplete();
   initBankAutocomplete();
+  await loadExchangePercent();  // aguarde aqui!
+  enableInsertOnEnter();
   loadWireValue();
 });
 
@@ -15,13 +14,8 @@ async function loadExchangePercent() {
   return fetch('../controller/exchangeController.php?action=exchangepercent')
     .then(res => res.json())
     .then(data => {
-      const pct = parseFloat(data.percent);
-      exchangePercent = isNaN(pct) ? 0 : pct;
+      exchangePercent = parseFloat(data.percent) || 0;
       console.log('Percent carregado:', exchangePercent);
-    })
-    .catch(err => {
-      console.error('Erro ao carregar percent:', err);
-      exchangePercent = 0;
     });
 }
 
@@ -231,42 +225,40 @@ function insertCashflow(calculated) {
  * Escuta o campo "Value" e insere automaticamente ao pressionar Enter
  */
 function enableInsertOnEnter() {
-  const valueInput = document.getElementById('valueInput');
-  const percent = exchangePercent; // carregado via loadExchangePercent()
+  const input = document.getElementById('valueInput');
+  if (!input) return;
 
-  if (!valueInput) return;
-
-  valueInput.addEventListener('keydown', function (event) {
+  input.addEventListener('keydown', function(event) {
     if (event.key === 'Enter' || event.key === 'Tab') {
-      event.preventDefault(); // evita comportamento padrão
+      event.preventDefault();
 
-      const valor = parseFloat(valueInput.value.replace(',', '.'));
-      console.log('Tecla detectada, valor:', valor, 'percent:', exchangePercent);
+      const value = parseFloat(input.value.replace(',', '.'));
+      if (isNaN(value)) return alert('Valor inválido');
 
-      if (isNaN(valor)) {
-        alert('Digite um valor válido.');
-        return;
-      }
+      calculateCashflowValues(value, exchangePercent).then(result => {
+        console.log('Cálculo recebido:', result);
+      
+        if (!result || isNaN(result.totalflow) || isNaN(result.totaltopay)) {
+          return alert('Erro no cálculo');
+        }
+      
+        const tfElem = document.getElementById('totalflow');
+        const tpElem = document.getElementById('totaltopay');
+      
+        if (!tfElem || !tpElem) {
+          console.error('Campos não encontrados no DOM:', tfElem, tpElem);
+          return;
+        }
+      
+        tfElem.value = Number(result.totalflow).toFixed(2);
+        tpElem.value = Number(result.totaltopay).toFixed(2);
+        console.log('Campo totalflow agora vale:', tfElem.value);
+        console.log('Campo totaltopay agora vale:', tpElem.value);
 
-      calculateCashflowValues(valor, exchangePercent)
-        .then(result => {
-          if (!result) {
-            console.log('Resultado do cálculo:', result);
-            alert('Erro ao validar valores.');
-            return;
-          }
-
-          // Atualiza com os valores corretos
-          if (result && result.totalflow && result.totaltopay) {
-            document.getElementById('totalflow').value = result.totalflow.toFixed(2);
-            document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
-          } else {
-            console.warn('Valores inválidos retornados:', result);
-          }
-          
-          // Agora inserimos o registro
-          insertCashflow(result);
-        });
+      
+        insertCashflow(result);
+      });
+      
     }
   });
 }
