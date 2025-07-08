@@ -120,7 +120,7 @@ function updateCashflowTable(data) {
 
     const valueflow = Number(row.valueflow).toFixed(2);
     const centsflow = Number(row.centsflow).toFixed(2);
-    const percentflow = row.percentflow;
+    // const percentflow = row.percentflow;
     const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
     const subtotalflow = Number(row.subtotalflow).toFixed(2);
     const cents2flow = Number(row.cents2flow).toFixed(2);
@@ -228,39 +228,43 @@ function enableInsertOnEnter() {
   const input = document.getElementById('valueInput');
   if (!input) return;
 
-  input.addEventListener('keydown', function(event) {
+  valueInput.addEventListener('keydown', function (event) {
     if (event.key === 'Enter' || event.key === 'Tab') {
       event.preventDefault();
-
-      const value = parseFloat(input.value.replace(',', '.'));
-      if (isNaN(value)) return alert('Valor inválido');
-
-      calculateCashflowValues(value, exchangePercent).then(result => {
-        console.log('Cálculo recebido:', result);
-      
-        if (!result || isNaN(result.totalflow) || isNaN(result.totaltopay)) {
-          return alert('Erro no cálculo');
-        }
-      
-        const tfElem = document.getElementById('totalflow');
-        const tpElem = document.getElementById('totaltopay');
-      
-        if (!tfElem || !tpElem) {
-          console.error('Campos não encontrados no DOM:', tfElem, tpElem);
-          return;
-        }
-      
-        tfElem.value = Number(result.totalflow).toFixed(2);
-        tpElem.value = Number(result.totaltopay).toFixed(2);
-        console.log('Campo totalflow agora vale:', tfElem.value);
-        console.log('Campo totaltopay agora vale:', tpElem.value);
-
-      
-        insertCashflow(result);
-      });
-      
+  
+      const valor = parseFloat(valueInput.value.replace(',', '.'));
+      if (isNaN(valor)) {
+        alert('Digite um valor válido.');
+        return;
+      }
+  
+      // 👉 agora usamos exchangePercent diretamente
+      calculateCashflowValues(valor, exchangePercent)
+        .then(result => {
+          if (!result) {
+            alert('Erro ao validar valores.');
+            return;
+          }
+  
+          const tfElem = document.getElementById('totalflow');
+          const tpElem = document.getElementById('totaltopay');
+  
+          if (!tfElem || !tpElem) {
+            console.error('Campos não encontrados no DOM:', tfElem, tpElem);
+            return;
+          }
+  
+          tfElem.value = Number(result.totalflow).toFixed(2);
+          tpElem.value = Number(result.totaltopay).toFixed(2);
+  
+          console.log('Campo totalflow agora vale:', tfElem.value);
+          console.log('Campo totaltopay agora vale:', tpElem.value);
+  
+          insertCashflow(result); // 👈 certifique-se que essa função não zera os campos também
+        });
     }
   });
+
 }
 
 /**
