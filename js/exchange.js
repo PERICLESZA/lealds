@@ -120,7 +120,7 @@ function updateCashflowTable(data) {
 
     const valueflow = Number(row.valueflow).toFixed(2);
     const centsflow = Number(row.centsflow).toFixed(2);
-    // const percentflow = row.percentflow;
+    const percentflow = typeof row.percentflow !== 'undefined' ? row.percentflow : 0;
     const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
     const subtotalflow = Number(row.subtotalflow).toFixed(2);
     const cents2flow = Number(row.cents2flow).toFixed(2);

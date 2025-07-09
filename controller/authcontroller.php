@@ -7,11 +7,11 @@ if (session_status() == PHP_SESSION_NONE) {
 require __DIR__ . '/../connection/lealds.php';
 
 // Garantir que a conexão está disponível
-if (!isset($connections['cedroibr'])) {
+if (!isset($connections['cedroibr7'])) {
     die("Erro: Conexão principal com o banco de dados não encontrada.");
 }
 
-$pdo = $connections['cedroibr'];
+$pdo = $connections['cedroibr7'];
 
 // Verificar se os dados do formulário foram enviados
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
