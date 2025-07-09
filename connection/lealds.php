@@ -2,6 +2,7 @@
 # lealds.php
 
 // Configuração dos bancos de dados
+//Acd3590t
 $databases = [
     ['name' => 'cedroibr', 'user' => 'cedroibr', 'password' => '28cedr39'],
     ['name' => 'cedroibr2', 'user' => 'cedroibr_cedroibr2', 'password' => '5AM8U7MmyU*'],
