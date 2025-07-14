@@ -16,13 +16,21 @@
     <div class="dashboard-container">
 
         <!-- Campo de busca -->
-        <div class="cad-group">
+        <div class="cad-group top">
             <div class="input-container">
                 <label for="searchInput">Phone No/name:</label>
                 <input type="text" id="searchInput" name="searchInput" autocomplete="off" list="customerList" />
                 <input type="hidden" id="idcustomer" name="idcustomer" />
                 <datalist id="customerList"></datalist>
                 <span id="selectedCustomerName" style="display: none;"></span>
+            </div>
+            <div class="input-container">
+                <label>Date</label>
+                <input type="date" id="dtcashflow" tabindex="-1" disabled />
+            </div>
+            <div class="input-container">
+                <label>Time</label>
+                <input type="text" id="tchaflow" tabindex="-1" disabled />
             </div>
         </div>
 
@@ -35,14 +43,6 @@
                         <input type="text" id="searchCustomer" list="customerList2" autocomplete="off" />
                         <input type="hidden" id="fk_idcustomer" name="fk_idcustomer" />
                         <datalist id="customerList2"></datalist>
-                    </div>
-                    <div class="input-container">
-                        <label>Date</label>
-                        <input type="date" id="dtcashflow" />
-                    </div>
-                    <div class="input-container">
-                        <label>Time</label>
-                        <input type="text" id="tchaflow" />
                     </div>
                     <div class="input-container">
                         <label for="searchBank">Our Bank:</label>

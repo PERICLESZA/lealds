@@ -2,7 +2,7 @@
 include '../connection/lealds.php';
 include '../connection/connect.php';
 
-$conn = $connections['cedroibr'];
+$conn = $connections['cedroibr7'];
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
@@ -108,11 +108,11 @@ function getExchangeComission(PDO $conn): float
 // 🧮 Calcula os campos com base no valor e percentual
 function calculateCashflowValues(float $value, float $percent): array
 {
-    $centsflow = round(($value - floor($value)) * 100);
+    $centsflow = $value - floor($value);
     $value_base = floor($value);
 
-    $valuepercentflow = round($value_base * (1 + $percent / 100), 2);
-    $cents2flow = round(($valuepercentflow - floor($valuepercentflow)) * 100);
+    $valuepercentflow = round($value_base * ($percent / 100), 2);
+    $cents2flow = $valuepercentflow - floor($valuepercentflow);
 
     $totalflow = $centsflow + $cents2flow + $valuepercentflow;
     $totaltopay = $value - $totalflow;

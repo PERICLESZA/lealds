@@ -7,11 +7,11 @@ session_start(); // Garante que a sessão é carregada
 require __DIR__ . '/connection/lealds.php'; // Ajuste o caminho se necessário
 
 // Verifica se a conexão existe
-if (!isset($connections['cedroibr'])) {
+if (!isset($connections['cedroibr7'])) {
     die("Erro: Conexão principal com o banco de dados não encontrada.");
 }
 
-$pdo = $connections['cedroibr'];
+$pdo = $connections['cedroibr7'];
 
 // Buscar todas as lojas
 $sqlStores = "SELECT idstore, nmstore, nmbd FROM store";

@@ -20,3 +20,18 @@
     height: auto;
     border-radius: 8px;
 }
+
+.cad-group.top {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+}
+
+.cad-group.top .input-container:nth-child(1) {
+    flex: 0 0 75%;
+}
+
+.cad-group.top .input-container:nth-child(2),
+.cad-group.top .input-container:nth-child(3) {
+    flex: 0 0 10%;
+}
