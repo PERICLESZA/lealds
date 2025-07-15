@@ -3,7 +3,7 @@
 
     // Verifica se a variável de sessão store está definida
     if (!isset($_SESSION['store'])) {
-        echo json_encode(["error" => "Sessão inválida. Store não definida."]);
+        echo json_encode(["error" => "Sessao invalida. Store nao definida."]);
         exit;
     }
     $store = $_SESSION['store'];

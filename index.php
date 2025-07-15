@@ -18,7 +18,6 @@ $sqlStores = "SELECT idstore, nmstore, nmbd FROM store";
 $stmtStores = $pdo->query($sqlStores);
 $stores = $stmtStores->fetchAll(PDO::FETCH_ASSOC);
 $ip = $_SERVER['REMOTE_ADDR'];
-
 ?>
 
 <head>
