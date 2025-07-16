@@ -296,11 +296,13 @@ function initCustomerAutocomplete() {
 
   input.addEventListener('input', () => {
     const term = input.value.trim();
+
     if (term.length >= 2) {
       fetchCustomerSuggestions(term)
         .then(data => {
           customers = data;
           dataList.innerHTML = '';
+
           data.forEach(c => {
             const option = document.createElement('option');
             option.value = `${c.phone} - ${c.name}`;
@@ -309,24 +311,19 @@ function initCustomerAutocomplete() {
           });
         })
         .catch(console.error);
-    } else dataList.innerHTML = '';
+    }
   });
 
-  function selectCustomer() {
-    const sel = customers.find(c => input.value === `${c.phone} - ${c.name}`);
-    if (sel) {
-      hiddenId.value = sel.idcustomer;
-      console.log("Empresa selecionada:", sel);
+  // Atualiza o ID escondido quando o usuário escolhe uma opção do datalist
+  input.addEventListener('change', () => {
+    const val = input.value.trim();
+    const option = [...dataList.options].find(opt => opt.value === val);
+
+    if (option) {
+      hiddenId.value = option.dataset.id;
+      console.log("Cliente selecionado:", option.value, "ID:", hiddenId.value);
     } else {
       hiddenId.value = '';
-    }
-  }
-
-  input.addEventListener('change', selectCustomer);
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      selectCustomer();
     }
   });
 }
