@@ -35,3 +35,25 @@
 .cad-group.top .input-container:nth-child(3) {
     flex: 0 0 10%;
 }
+
+.autocomplete-ul {
+    position: absolute;
+    z-index: 1000;
+    list-style: none;
+    background: white;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.autocomplete-ul li {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.autocomplete-ul li:hover {
+    background-color: #eee;
+}

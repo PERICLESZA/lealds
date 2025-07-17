@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadWireValue();
 });
 
+
 // Busca o percentual poadrão de desconto por cheque
 let exchangePercent = 0;
 
@@ -24,10 +25,9 @@ async function loadExchangePercent() {
  */
 function initAutocomplete() {
   const input = document.getElementById('searchInput');
-  const dataList = document.getElementById('customerList');
   const hiddenId = document.getElementById('idcustomer');
   const selectedNameSpan = document.getElementById('selectedCustomerName');
-
+  const list = document.getElementById('autocompleteList');
   let customers = [];
 
   input.addEventListener('input', () => {
@@ -36,35 +36,33 @@ function initAutocomplete() {
       fetchCustomerSuggestions(term)
         .then(data => {
           customers = data;
-          updateDataList(dataList, customers);
-        })
-        .catch(error => console.error('Erro na busca:', error));
+          list.innerHTML = '';
+          data.forEach(customer => {
+            const li = document.createElement('li');
+            li.textContent = `${customer.phone} - ${customer.name}`;
+            li.dataset.id = customer.idcustomer;
+            li.addEventListener('click', () => {
+              input.value = li.textContent;
+              hiddenId.value = li.dataset.id;
+              selectedNameSpan.textContent = customer.name;
+              list.innerHTML = '';
+              preencherDataHoraAtual();
+              fetchCashflowData(customer.idcustomer)
+                .then(updateCashflowTable)
+                .catch(err => console.error('Erro ao carregar tabela:', err));
+            });
+            list.appendChild(li);
+          });
+        });
     } else {
-      clearDataList(dataList);
+      list.innerHTML = '';
     }
   });
 
-  input.addEventListener('change', () => {
-    handleCustomerSelection(input.value, customers, hiddenId, selectedNameSpan);
-    if (hiddenId.value) {
-      fetchCashflowData(hiddenId.value)
-        .then(updateCashflowTable)
-        .catch(err => console.error('Erro ao carregar tabela:', err));
-    } else {
-      clearCashflowTable();
-    }
-  });
-
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      handleCustomerSelection(input.value, customers, hiddenId, selectedNameSpan);
-      if (hiddenId.value) {
-        fetchCashflowData(hiddenId.value)
-          .then(updateCashflowTable)
-          .catch(err => console.error('Erro ao carregar tabela:', err));
-      } else {
-        clearCashflowTable();
-      }
+  // Fecha a lista se clicar fora
+  document.addEventListener('click', (e) => {
+    if (!list.contains(e.target) && e.target !== input) {
+      list.innerHTML = '';
     }
   });
 }

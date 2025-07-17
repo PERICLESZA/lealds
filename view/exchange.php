@@ -19,10 +19,10 @@
         <div class="cad-group top">
             <div class="input-container">
                 <label for="searchInput">Phone No/name:</label>
-                <input type="text" id="searchInput" name="searchInput" autocomplete="off" list="customerList" />
-                <input type="hidden" id="idcustomer" name="idcustomer" />
-                <datalist id="customerList"></datalist>
+                <input type="text" id="searchInput" autocomplete="off" /> <input type="hidden" id="idcustomer" name="idcustomer" />
+                <ul id="autocompleteList" class="autocomplete-ul"></ul>
                 <span id="selectedCustomerName" style="display: none;"></span>
+
             </div>
             <div class="input-container">
                 <label>Date</label>
