@@ -57,3 +57,9 @@
 .autocomplete-ul li:hover {
     background-color: #eee;
 }
+
+#autocompleteList li.active {
+    background-color: #d0e7ff;
+    cursor: pointer;
+}
+  

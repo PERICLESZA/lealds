@@ -29,18 +29,22 @@ function initAutocomplete() {
   const selectedNameSpan = document.getElementById('selectedCustomerName');
   const list = document.getElementById('autocompleteList');
   let customers = [];
+  let currentFocus = -1;
 
   input.addEventListener('input', () => {
     const term = input.value.trim();
+    currentFocus = -1;
     if (term.length >= 2) {
       fetchCustomerSuggestions(term)
         .then(data => {
           customers = data;
           list.innerHTML = '';
-          data.forEach(customer => {
+          data.forEach((customer, index) => {
             const li = document.createElement('li');
             li.textContent = `${customer.phone} - ${customer.name}`;
             li.dataset.id = customer.idcustomer;
+            li.setAttribute('data-index', index);
+            li.classList.add('autocomplete-item');
             li.addEventListener('click', () => {
               input.value = li.textContent;
               hiddenId.value = li.dataset.id;
@@ -59,7 +63,31 @@ function initAutocomplete() {
     }
   });
 
-  // Fecha a lista se clicar fora
+  input.addEventListener('keydown', (e) => {
+    const items = list.querySelectorAll('li');
+    if (e.key === 'ArrowDown') {
+      currentFocus++;
+      highlightItem(items, currentFocus);
+    } else if (e.key === 'ArrowUp') {
+      currentFocus--;
+      highlightItem(items, currentFocus);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentFocus > -1 && items[currentFocus]) {
+        items[currentFocus].click();
+      }
+    }
+  });
+
+  function highlightItem(items, index) {
+    if (!items || items.length === 0) return;
+    items.forEach(item => item.classList.remove('active'));
+    if (index >= items.length) currentFocus = 0;
+    if (index < 0) currentFocus = items.length - 1;
+    items[currentFocus].classList.add('active');
+    items[currentFocus].scrollIntoView({ block: 'nearest' });
+  }
+
   document.addEventListener('click', (e) => {
     if (!list.contains(e.target) && e.target !== input) {
       list.innerHTML = '';
