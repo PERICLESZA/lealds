@@ -234,12 +234,21 @@ function clearCashflowTable() {
 /**
  * Envia os dados do formulário para o controller e insere um novo cashflow.
  */
-function insertCashflow(calculated) {
+async function insertCashflow(calculated) {
   const value = calculated.valueflow;
   const dtcashflow = document.getElementById('dtcashflow').value;
   const fk_idcustomer = document.getElementById('idcustomer').value;
   const fk_idbankmaster = document.getElementById('fk_idbankmaster').value;
   const tchaflow = document.getElementById('tchaflow').value;
+
+  const backendResult = await calcularTotaisNoBackend(value);
+  if (!backendResult) return;
+
+  const { totalflow, totaltopay } = backendResult;
+
+  // Preencher os campos com os valores reais do backend:
+  document.getElementById('totalflow').value = totalflow.toFixed(2);
+  document.getElementById('totaltopay').value = totaltopay.toFixed(2);
 
   const formData = new URLSearchParams({
     action: 'insert',
@@ -464,20 +473,20 @@ async function calculateCashflowValues(value, exchangePercent) {
   }
 }
 
-// function enableCalculationOnInput() {
-//   const valueInput = document.getElementById('valueInput');
-//   const percent = 10; // OU PEGUE DE OUTRO CAMPO, se for dinâmico
+async function calcularTotaisNoBackend(value) {
+  const formData = new FormData();
+  formData.append('value', value);
+  formData.append('percent', exchangePercent);
 
-//   valueInput.addEventListener('blur', () => {
-//     const valor = parseFloat(valueInput.value);
-//     if (isNaN(valor)) return;
+  const response = await fetch('../controller/exchangeController.php?action=calculate', {
+    method: 'POST',
+    body: formData,
+  });
 
-//     calculateCashflowValues(valor, percent)
-//       .then(result => {
-//         if (result) {
-//           document.getElementById('totalflow').value = result.totalflow.toFixed(2);
-//           document.getElementById('totaltopay').value = result.totaltopay.toFixed(2);
-//         }
-//       });
-//   });
-// }
+  if (!response.ok) {
+    console.error('Erro ao calcular no backend');
+    return null;
+  }
+
+  return response.json(); // { totalflow, totaltopay }
+}

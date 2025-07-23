@@ -37,9 +37,9 @@ switch ($action) {
         $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
         $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
         $result = calculateCashflowValues($value, $percent);
-        header('Content-Type: application/json');
+        // header('Content-Type: application/json');
         echo json_encode($result);
-        break;
+        exit;
 
     default:
         echo json_encode(["error" => "Ação inválida"]);
