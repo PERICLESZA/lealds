@@ -152,9 +152,17 @@ function updateCashflowTable(data) {
     const cents2flow = Number(row.cents2flow).toFixed(2);
     const baseTotalflow = parseFloat(row.totalflow);
     const baseTotaltopay = parseFloat(row.totaltopay);
-    // Converter strings em objetos Date
-    const dataObj = new Date(row.dtcashflow);
-    const horaObj = new Date(`1970-01-01T${row.tchaflow}`); // assume tchaflow como string tipo "14:30:00"
+
+    // ✅ Corrigir fuso: construir data como local
+    const partesData = row.dtcashflow.split('-');
+    const dataObj = new Date(
+      parseInt(partesData[0]),
+      parseInt(partesData[1]) - 1,
+      parseInt(partesData[2])
+    );
+
+    // Hora (essa pode usar UTC, pois já vem com hora completa)
+    const horaObj = new Date(`1970-01-01T${row.tchaflow}`);
 
     // Formatar data: dd/mm/yyyy
     const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // ou use manualmente: `${dataObj.getDate().toString().padStart(2, '0')}/${(dataObj.getMonth()+1).toString().padStart(2, '0')}/${dataObj.getFullYear()}`
