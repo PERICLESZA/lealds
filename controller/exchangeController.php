@@ -5,6 +5,12 @@ include '../connection/connect.php';
 date_default_timezone_set('America/Sao_Paulo');
 
 $conn = $connections['cedroibr7'];
+$conn->exec("SET time_zone = '-03:00'"); // <- AGORA SIM NA CONEXÃO CERTA
+
+$verifica = $conn->query("SELECT NOW() AS agora")->fetch();
+file_put_contents('log_cashflow.txt', "NOW MySQL: {$verifica['agora']}" . PHP_EOL, FILE_APPEND);
+
+
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
