@@ -2,6 +2,8 @@
 <html lang="pt-br">
 
 <?php
+date_default_timezone_set('America/Sao_Paulo');
+
 session_start(); // Garante que a sessão é carregada
 
 require __DIR__ . '/connection/lealds.php'; // Ajuste o caminho se necessário

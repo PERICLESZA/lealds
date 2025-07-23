@@ -152,6 +152,15 @@ function updateCashflowTable(data) {
     const cents2flow = Number(row.cents2flow).toFixed(2);
     const baseTotalflow = parseFloat(row.totalflow);
     const baseTotaltopay = parseFloat(row.totaltopay);
+    // Converter strings em objetos Date
+    const dataObj = new Date(row.dtcashflow);
+    const horaObj = new Date(`1970-01-01T${row.tchaflow}`); // assume tchaflow como string tipo "14:30:00"
+
+    // Formatar data: dd/mm/yyyy
+    const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // ou use manualmente: `${dataObj.getDate().toString().padStart(2, '0')}/${(dataObj.getMonth()+1).toString().padStart(2, '0')}/${dataObj.getFullYear()}`
+
+    // Formatar hora: hh:mm
+    const horaFormatada = horaObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     totalflowAcumulado += baseTotalflow;
     totaltopayAcumulado += baseTotaltopay;
@@ -168,6 +177,10 @@ function updateCashflowTable(data) {
         <span class="wire-amount"> ${wireValue.toFixed(2)}</span>
       </td>
       <td>${row.cashflowok}</td>
+      <td>${dataFormatada}</td>
+      <td>${horaFormatada}</td>
+
+
     `;
     tr.innerHTML = trHtml;
     tbody.appendChild(tr);
@@ -297,13 +310,13 @@ function enableInsertOnEnter() {
  * Preenche os campos de data e hora com os valores atuais
  */
 function preencherDataHoraAtual() {
-  const hoje = new Date();
 
-  const dataFormatada = hoje.toISOString().slice(0, 10); // yyyy-mm-dd
+  const hoje = new Date();
+  const dataFormatada = hoje.toLocaleDateString('pt-BR').split('/').reverse().join('-'); // yyyy-mm-dd
   const horaFormatada = hoje.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    // second: '2-digit'
   });
 
   document.getElementById('dtcashflow').value = dataFormatada;

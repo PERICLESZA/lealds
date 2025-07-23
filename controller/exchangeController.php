@@ -1,6 +1,8 @@
 <?php
+
 include '../connection/lealds.php';
 include '../connection/connect.php';
+date_default_timezone_set('America/Sao_Paulo');
 
 $conn = $connections['cedroibr7'];
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
@@ -82,9 +84,11 @@ function getCashflowByCustomer($conn)
         return;
     }
 
-    $sql = "SELECT valueflow, centsflow, percentflow, valuepercentflow, subtotalflow, cents2flow, wire, cashflowok
+    $sql = "SELECT valueflow, centsflow, percentflow, valuepercentflow, subtotalflow, cents2flow, wire, cashflowok, dtcashflow, tchaflow
             FROM cashflow
-            WHERE fk_idcustomer = :id";
+            WHERE fk_idcustomer = :id
+            ORDER BY dtcashflow DESC, tchaflow DESC";
+
     $stmt = $conn->prepare($sql);
     $stmt->execute([':id' => $id]);
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -131,11 +135,34 @@ function calculateCashflowValues(float $value, float $percent): array
 // 💾 Insere os dados calculados no banco de dados
 function insertCashflow(PDO $conn, array $data): bool
 {
+    file_put_contents('log_cashflow.txt', "insertCashflow chamada em " . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
+    // Usa fuso horário explicitamente
+    $dt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
+    $dataAtual = $data['dtcashflow'] ?? $dt->format('Y-m-d'); // fallback se não vier nada
+    $horaAtual = $dt->format('H:i:s');
+
+    // echo "Data gerada: $dataAtual<br>Hora gerada: $horaAtual";
+    // exit;
+
     $stmt = $conn->prepare("
         INSERT INTO cashflow 
-        (valueflow, centsflow, valuepercentflow, cents2flow, percentflow, totalflow, totaltopay, dtcashflow, tchaflow, fk_idcustomer, fk_idbankmaster)
+        (
+            valueflow, centsflow, valuepercentflow, cents2flow, 
+            percentflow, totalflow, totaltopay, 
+            dtcashflow, tchaflow, 
+            fk_idcustomer, fk_idbankmaster
+        )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
+    
+    // echo "<pre>";
+    // print_r([
+    //     'dataAtual' => $dataAtual,
+    //     'horaAtual' => $horaAtual,
+    //     'datetime PHP' => $dt->format('Y-m-d H:i:s')
+    // ]);
+    // echo "</pre>";
+    // exit;
 
     return $stmt->execute([
         $data['valueflow'],
@@ -145,12 +172,11 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['percentflow'],
         $data['totalflow'],
         $data['totaltopay'],
-        $data['dtcashflow'],
-        $data['tchaflow'],
+        $dataAtual,  // <- agora correta
+        $horaAtual,
         $data['fk_idcustomer'],
         $data['fk_idbankmaster']
     ]);
-
 }
 
 // 🚀 Função principal que trata a action 'insert'
@@ -161,10 +187,13 @@ function handleInsertCashflow(PDO $conn): void
     $percent = getExchangeComission($conn);
     $cashflowData = calculateCashflowValues($value, $percent);
 
-    $cashflowData['dtcashflow'] = $_POST['dtcashflow'] ?? null;
+    // Gera a data e hora corretas no backend
+    $dt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
+    $cashflowData['dtcashflow'] = $dt->format('Y-m-d');
+    $cashflowData['tchaflow'] = $dt->format('H:i:s');
+
     $cashflowData['fk_idcustomer'] = $_POST['fk_idcustomer'] ?? null;
     $cashflowData['fk_idbankmaster'] = $_POST['fk_idbankmaster'] ?? null;
-    $cashflowData['tchaflow'] = $_POST['tchaflow'] ?? null;
 
     $success = insertCashflow($conn, $cashflowData);
 

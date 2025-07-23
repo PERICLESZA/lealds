@@ -69,7 +69,7 @@
                     <img src="../cutomer_pic/5269caa7f7.JPG" alt="Foto do cliente" class="customer-image" />
                 </div> -->
             </div>
-
+            
             <!-- Tabela -->
             <div class="table-container">
                 <table border="0" class="table">
@@ -83,6 +83,8 @@
                             <th>Cents 2</th>
                             <th>Wire</th>
                             <th>Ok</th>
+                            <th>Date</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
                     <tbody id="customer_data"></tbody>

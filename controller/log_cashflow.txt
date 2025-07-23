@@ -1,0 +1,5 @@
+insertCashflow chamada em 2025-07-22 14:00:10
+insertCashflow chamada em 2025-07-22 14:59:04
+insertCashflow chamada em 2025-07-22 15:02:28
+insertCashflow chamada em 2025-07-22 15:09:00
+insertCashflow chamada em 2025-07-22 15:10:15
