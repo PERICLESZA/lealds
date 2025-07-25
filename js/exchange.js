@@ -150,9 +150,9 @@ function updateCashflowTable(data) {
     const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
     const subtotalflow = Number(row.subtotalflow).toFixed(2);
     const cents2flow = Number(row.cents2flow).toFixed(2);
-    const baseTotalflow = parseFloat(row.totalflow);
-    const baseTotaltopay = parseFloat(row.totaltopay);
-
+    const baseTotalflow = parseFloat(row.totalflow) || 0;
+    const baseTotaltopay = parseFloat(row.totaltopay) || 0;
+    
     // ✅ Formatando data como local
     let dataFormatada = '';
     if (row.dtcashflow) {
@@ -207,9 +207,9 @@ function updateCashflowTable(data) {
       allRows.forEach((rowEl, i) => {
         const isChecked = rowEl.querySelector('.wire-check').checked;
         const rowData = data[i];
-        const tf = parseFloat(rowData.totalflow);
-        const tp = parseFloat(rowData.totaltopay);
-
+        const tf = parseFloat(rowData.totalflow) || 0;
+        const tp = parseFloat(rowData.totaltopay) || 0;
+        
         if (isChecked) {
           totalflowFinal += tf + wireValue;
           totaltopayFinal += tp - wireValue;
@@ -219,6 +219,9 @@ function updateCashflowTable(data) {
         }
       });
 
+      console.log("Soma totalflow:", totalflowAcumulado);
+      console.log("Soma totaltopay:", totaltopayAcumulado);
+      
       document.getElementById('totalflow').value = totalflowFinal.toFixed(2);
       document.getElementById('totaltopay').value = totaltopayFinal.toFixed(2);
     });

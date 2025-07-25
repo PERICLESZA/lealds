@@ -8,7 +8,7 @@ $conn = $connections['cedroibr7'];
 $conn->exec("SET time_zone = '-03:00'"); // <- AGORA SIM NA CONEXÃO CERTA
 
 $verifica = $conn->query("SELECT NOW() AS agora")->fetch();
-file_put_contents('log_cashflow.txt', "NOW MySQL: {$verifica['agora']}" . PHP_EOL, FILE_APPEND);
+// file_put_contents('log_cashflow.txt', "NOW MySQL: {$verifica['agora']}" . PHP_EOL, FILE_APPEND);
 
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
@@ -141,7 +141,7 @@ function calculateCashflowValues(float $value, float $percent): array
 // 💾 Insere os dados calculados no banco de dados
 function insertCashflow(PDO $conn, array $data): bool
 {
-    file_put_contents('log_cashflow.txt', "insertCashflow chamada em " . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
+    // file_put_contents('log_cashflow.txt', "insertCashflow chamada em " . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
     // Usa fuso horário explicitamente
     $dt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
     $dataAtual = $data['dtcashflow'] ?? $dt->format('Y-m-d'); // fallback se não vier nada
