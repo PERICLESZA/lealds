@@ -153,26 +153,33 @@ function updateCashflowTable(data) {
     const baseTotalflow = parseFloat(row.totalflow);
     const baseTotaltopay = parseFloat(row.totaltopay);
 
-    // ✅ Corrigir fuso: construir data como local
-    const partesData = row.dtcashflow.split('-');
-    const dataObj = new Date(
-      parseInt(partesData[0]),
-      parseInt(partesData[1]) - 1,
-      parseInt(partesData[2])
-    );
+    // ✅ Formatando data como local
+    let dataFormatada = '';
+    if (row.dtcashflow) {
+      const partesData = row.dtcashflow.split('-');
+      const dataObj = new Date(
+        parseInt(partesData[0]),
+        parseInt(partesData[1]) - 1,
+        parseInt(partesData[2])
+      );
+      dataFormatada = dataObj.toLocaleDateString('pt-BR');
+    }
 
-    // Hora (essa pode usar UTC, pois já vem com hora completa)
-    const horaObj = new Date(`1970-01-01T${row.tchaflow}`);
+    // ✅ Formatando hora
+    let horaFormatada = '';
+    if (row.tchaflow) {
+      const horaObj = new Date(`1970-01-01T${row.tchaflow}`);
+      horaFormatada = horaObj.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
 
-    // Formatar data: dd/mm/yyyy
-    const dataFormatada = dataObj.toLocaleDateString('pt-BR'); // ou use manualmente: `${dataObj.getDate().toString().padStart(2, '0')}/${(dataObj.getMonth()+1).toString().padStart(2, '0')}/${dataObj.getFullYear()}`
-
-    // Formatar hora: hh:mm
-    const horaFormatada = horaObj.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
+    // ✅ Acumulando os valores iniciais
     totalflowAcumulado += baseTotalflow;
     totaltopayAcumulado += baseTotaltopay;
 
+    // ✅ Montagem do HTML da linha
     const trHtml = `
       <td>${valueflow}</td>
       <td>${centsflow}</td>
@@ -182,26 +189,23 @@ function updateCashflowTable(data) {
       <td>${cents2flow}</td>
       <td>
         <input type="checkbox" class="wire-check" data-index="${index}">
-        <span class="wire-amount"> ${wireValue.toFixed(2)}</span>
+        <span class="wire-amount">${wireValue.toFixed(2)}</span>
       </td>
       <td>${row.cashflowok}</td>
       <td>${dataFormatada}</td>
       <td>${horaFormatada}</td>
-
-
     `;
     tr.innerHTML = trHtml;
     tbody.appendChild(tr);
 
+    // ✅ Evento de alteração no checkbox
     tr.querySelector('.wire-check').addEventListener('change', function () {
-      // Recalcular totais com base em todos os checkboxes
       let totalflowFinal = 0;
       let totaltopayFinal = 0;
 
       const allRows = document.querySelectorAll('#customer_data tr');
       allRows.forEach((rowEl, i) => {
         const isChecked = rowEl.querySelector('.wire-check').checked;
-
         const rowData = data[i];
         const tf = parseFloat(rowData.totalflow);
         const tp = parseFloat(rowData.totaltopay);
@@ -220,7 +224,7 @@ function updateCashflowTable(data) {
     });
   });
 
-  // Exibir totais iniciais sem wire
+  // ✅ Atualizar totais iniciais nos inputs
   document.getElementById('totalflow').value = totalflowAcumulado.toFixed(2);
   document.getElementById('totaltopay').value = totaltopayAcumulado.toFixed(2);
 }
