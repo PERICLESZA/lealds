@@ -85,6 +85,8 @@
                             <th>Ok</th>
                             <th>Date</th>
                             <th>Time</th>
+                            <th>Recieve</th>
+                            <th>Pay</th>
                         </tr>
                     </thead>
                     <tbody id="customer_data"></tbody>

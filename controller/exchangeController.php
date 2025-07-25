@@ -90,7 +90,10 @@ function getCashflowByCustomer($conn)
         return;
     }
 
-    $sql = "SELECT valueflow, centsflow, percentflow, valuepercentflow, subtotalflow, cents2flow, wire, cashflowok, dtcashflow, tchaflow
+    $sql = "SELECT valueflow, centsflow, percentflow, 
+                   valuepercentflow, subtotalflow, cents2flow, 
+                   wire, cashflowok, dtcashflow, tchaflow,
+                   totalflow, totaltopay
             FROM cashflow
             WHERE fk_idcustomer = :id
             ORDER BY dtcashflow DESC, tchaflow DESC";

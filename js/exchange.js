@@ -194,6 +194,8 @@ function updateCashflowTable(data) {
       <td>${row.cashflowok}</td>
       <td>${dataFormatada}</td>
       <td>${horaFormatada}</td>
+      <td class="totalflow">${baseTotalflow}</td>
+      <td class="totaltopay">${baseTotaltopay}</td>
     `;
     tr.innerHTML = trHtml;
     tbody.appendChild(tr);
@@ -228,8 +230,9 @@ function updateCashflowTable(data) {
   });
 
   // ✅ Atualizar totais iniciais nos inputs
-  document.getElementById('totalflow').value = totalflowAcumulado.toFixed(2);
-  document.getElementById('totaltopay').value = totaltopayAcumulado.toFixed(2);
+  updateTotalsFromTable();
+  // document.getElementById('totalflow').value = totalflowAcumulado.toFixed(2);
+  // document.getElementById('totaltopay').value = totaltopayAcumulado.toFixed(2);
 }
 
 
@@ -496,4 +499,20 @@ async function calcularTotaisNoBackend(value) {
   }
 
   return response.json(); // { totalflow, totaltopay }
+}
+
+function updateTotalsFromTable() {
+  let totalflowSum = 0;
+  let totaltopaySum = 0;
+
+  document.querySelectorAll('#customer_data .totalflow').forEach(cell => {
+    totalflowSum += parseFloat(cell.textContent.replace(',', '.')) || 0;
+  });
+
+  document.querySelectorAll('#customer_data .totaltopay').forEach(cell => {
+    totaltopaySum += parseFloat(cell.textContent.replace(',', '.')) || 0;
+  });
+
+  document.getElementById('totalflow').value = totalflowSum.toFixed(2);
+  document.getElementById('totaltopay').value = totaltopaySum.toFixed(2);
 }
