@@ -142,123 +142,139 @@ function updateCashflowTable(data) {
   let totaltopayAcumulado = 0;
 
   data.forEach((row, index) => {
-    const tr = document.createElement('tr');
-
-    const valueflow = Number(row.valueflow).toFixed(2);
-    const centsflow = Number(row.centsflow).toFixed(2);
-    const percentflow = typeof row.percentflow !== 'undefined' ? row.percentflow : 0;
-    const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
-    const subtotalflow = Number(row.subtotalflow).toFixed(2);
-    const cents2flow = Number(row.cents2flow).toFixed(2);
-    const baseTotalflow = parseFloat(row.totalflow) || 0;
-    const baseTotaltopay = parseFloat(row.totaltopay) || 0;
-    
-    // ✅ Formatando data como local
-    let dataFormatada = '';
-    if (row.dtcashflow) {
-      const partesData = row.dtcashflow.split('-');
-      const dataObj = new Date(
-        parseInt(partesData[0]),
-        parseInt(partesData[1]) - 1,
-        parseInt(partesData[2])
-      );
-      dataFormatada = dataObj.toLocaleDateString('pt-BR');
-    }
-
-    // ✅ Formatando hora
-    let horaFormatada = '';
-    if (row.tchaflow) {
-      const horaObj = new Date(`1970-01-01T${row.tchaflow}`);
-      horaFormatada = horaObj.toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-
-    // ✅ Acumulando os valores iniciais
-    totalflowAcumulado += baseTotalflow;
-    totaltopayAcumulado += baseTotaltopay;
-
-    // ✅ Montagem do HTML da linha
-    const trHtml = `
-      <td>${valueflow}</td>
-      <td>${centsflow}</td>
-      <td>${percentflow}</td>
-      <td>${valuepercentflow}</td>
-      <td>${subtotalflow}</td>
-      <td>${cents2flow}</td>
-      <td>
-        <input type="checkbox" class="wire-check" data-index="${index}">
-        <span class="wire-amount">${wireValue.toFixed(2)}</span>
-      </td>
-      <td>
-        <input type="checkbox" class="cashflowok-check" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
-      </td>
-      <td>${dataFormatada}</td>
-      <td>${horaFormatada}</td>
-      <td class="totalflow">${baseTotalflow}</td>
-      <td class="totaltopay">${baseTotaltopay}</td>
-    `;
-    tr.innerHTML = trHtml;
+    const tr = createCashflowRow(row, index, data);
     tbody.appendChild(tr);
 
-    // 🧩 Evento de alteração no checkbox cashflowok
-      tr.querySelector('.cashflowok-check').addEventListener('change', function () {
-        const isChecked = this.checked ? 1 : 0;
-        const id = this.dataset.id;
-
-        fetch('../controller/exchangeController.php?action=updateCashflowOk', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idcashflow: id, cashflowok: isChecked })
-        })
-        .then(response => response.json())
-        .then(result => {
-          if (result.success) {
-            console.log('Atualizado com sucesso');
-          } else {
-            console.error('Erro ao atualizar:', result.message);
-            alert('Erro ao atualizar o status.');
-          }
-        })
-        .catch(error => {
-          console.error('Erro na requisição:', error);
-        });
-      });
-
-    // ✅ Evento de alteração no checkbox wire
-    tr.querySelector('.wire-check').addEventListener('change', function () {
-      let totalflowFinal = 0;
-      let totaltopayFinal = 0;
-
-      const allRows = document.querySelectorAll('#customer_data tr');
-      allRows.forEach((rowEl, i) => {
-        const isChecked = rowEl.querySelector('.wire-check').checked;
-        const rowData = data[i];
-        const tf = parseFloat(rowData.totalflow) || 0;
-        const tp = parseFloat(rowData.totaltopay) || 0;
-        
-        if (isChecked) {
-          totalflowFinal += tf + wireValue;
-          totaltopayFinal += tp - wireValue;
-        } else {
-          totalflowFinal += tf;
-          totaltopayFinal += tp;
-        }
-      });
-
-      console.log("Soma totalflow:", totalflowAcumulado);
-      console.log("Soma totaltopay:", totaltopayAcumulado);
-      
-      document.getElementById('totalflow').value = totalflowFinal.toFixed(2);
-      document.getElementById('totaltopay').value = totaltopayFinal.toFixed(2);
-    });
+    // Acumular os totais iniciais
+    totalflowAcumulado += parseFloat(row.totalflow) || 0;
+    totaltopayAcumulado += parseFloat(row.totaltopay) || 0;
   });
 
-  // ✅ Atualizar totais iniciais nos inputs
-  updateTotalsFromTable();
-  // document.getElementById('totalflow').value = totalflowAcumulado.toFixed(2);
-  // document.getElementById('totaltopay').value = totaltopayAcumulado.toFixed(2);
+  // Atualiza os campos totais
+  document.getElementById('totalflow').value = totalflowAcumulado.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  document.getElementById('totaltopay').value = totaltopayAcumulado.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+
+function createCashflowRow(row, index, data) {
+
+  const tr = document.createElement('tr');
+  tr.dataset.idcashflow = row.idcashflow; 
+
+  const valueflow = Number(row.valueflow).toFixed(2);
+  const centsflow = Number(row.centsflow).toFixed(2);
+  const percentflow = row.percentflow ?? 0;
+  const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
+  const subtotalflow = Number(row.subtotalflow).toFixed(2);
+  const cents2flow = Number(row.cents2flow).toFixed(2);
+  const baseTotalflow = parseFloat(row.totalflow) || 0;
+  const baseTotaltopay = parseFloat(row.totaltopay) || 0;
+
+  const dataFormatada = row.dtcashflow
+    ? new Date(row.dtcashflow).toLocaleDateString('pt-BR')
+    : '';
+  const horaFormatada = row.tchaflow
+    ? new Date(`1970-01-01T${row.tchaflow}`).toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      })
+    : '';
+
+  const trHtml = `
+    <td>${valueflow}</td>
+    <td>${centsflow}</td>
+    <td>${percentflow}</td>
+    <td>${valuepercentflow}</td>
+    <td>${subtotalflow}</td>
+    <td>${cents2flow}</td>
+    <td>
+      <input type="checkbox" class="wire-check" data-index="${index}">
+      <span class="wire-amount">${wireValue.toFixed(2)}</span>
+    </td>
+    <td>
+      <input type="checkbox" class="cashflowok-check" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
+    </td>
+    <td>${dataFormatada}</td>
+    <td>${horaFormatada}</td>
+    <td class="totalflow">${baseTotalflow.toFixed(2)}</td>
+    <td class="totaltopay">${baseTotaltopay.toFixed(2)}</td>
+    <td><button class="delete-btn" data-id="${row.idcashflow}"><i class="fas fa-trash-alt delete-icon" title="Excluir"></i></button></td>
+  `;
+
+  tr.innerHTML = trHtml;
+
+  // Eventos
+  addWireCheckboxHandler(tr, data, index);
+  addDeleteButtonHandler(tr, row.idcashflow);
+
+  return tr;
+}
+
+function addWireCheckboxHandler(tr, data, index) {
+  tr.querySelector('.wire-check').addEventListener('change', function () {
+    let totalflowFinal = 0;
+    let totaltopayFinal = 0;
+
+    const allRows = document.querySelectorAll('#customer_data tr');
+    allRows.forEach((rowEl, i) => {
+      const isChecked = rowEl.querySelector('.wire-check').checked;
+      const rowData = data[i];
+      const tf = parseFloat(rowData.totalflow) || 0;
+      const tp = parseFloat(rowData.totaltopay) || 0;
+
+      if (isChecked) {
+        totalflowFinal += tf + wireValue;
+        totaltopayFinal += tp - wireValue;
+      } else {
+        totalflowFinal += tf;
+        totaltopayFinal += tp;
+      }
+    });
+
+    document.getElementById('totalflow').value = totalflowFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    document.getElementById('totaltopay').value = totaltopayFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+  });
+}
+
+function addDeleteButtonHandler(tr, idcashflow) {
+  tr.querySelector('.delete-btn').addEventListener('click', () => {
+    if (confirm('Confirma a exclusão deste lançamento?')) {
+      deleteCashflowEntry(idcashflow);
+    }
+  });
+}
+
+function deleteCashflowEntry(idcashflow) {
+
+  if (!idcashflow || isNaN(idcashflow)) {
+    alert('ID inválido para exclusão');
+    return;
+  }
+
+  fetch(`../controller/exchangeController.php?action=delete&id=${idcashflow}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (result.success) {
+        alert('Lançamento excluído com sucesso!');
+        // Recarrega os dados após exclusão
+        const idCustomer = document.getElementById('idcustomer').value;
+        if (idCustomer) {
+          fetchCashflowData(idCustomer)
+            .then(updateCashflowTable)
+            .catch(err => console.error('Erro ao atualizar tabela:', err));
+        }
+      } else {
+        alert('Erro ao excluir: ' + result.error);
+      }
+    })
+    .catch(error => {
+      console.error('Erro na exclusão:', error);
+      alert('Erro inesperado ao excluir.');
+    });
 }
 
 

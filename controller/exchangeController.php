@@ -40,9 +40,33 @@ switch ($action) {
         // header('Content-Type: application/json');
         echo json_encode($result);
         exit;
-
+    case 'delete':
+        $idcashflow = $_GET['id'] ?? 0;
+        $result = deleteCashflowById($conn, $idcashflow);
+        echo json_encode($result);
+        exit;
     default:
         echo json_encode(["error" => "Ação inválida"]);
+}
+
+// ❌ Exclusão de lançamento
+function deleteCashflowById($conn, $id)
+{
+    include '../db/connection.php'; // ou use global $conn;
+
+    // global $conn; // se você já declarou antes
+
+    if (!$conn) {
+        return ['success' => false, 'error' => 'Erro de conexão com o banco.'];
+    }
+
+    try {
+        $stmt = $conn->prepare("DELETE FROM cashflow WHERE idcashflow = ?");
+        $stmt->execute([$id]);
+        return ['success' => true];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
 }
 
 function getWireValue($conn)
@@ -123,9 +147,9 @@ function calculateCashflowValues(float $value, float $percent): array
 {
     $centsflow = $value - floor($value);
     $value_base = floor($value);
-
     $valuepercentflow = round($value_base * ($percent / 100), 2);
-    $cents2flow = $valuepercentflow - floor($valuepercentflow);
+    $subtotalflow = $value_base - $valuepercentflow;
+    $cents2flow = $subtotalflow - floor($subtotalflow);
 
     $totalflow = $centsflow + $cents2flow + $valuepercentflow;
     $totaltopay = $value - $totalflow;
@@ -136,7 +160,7 @@ function calculateCashflowValues(float $value, float $percent): array
         'valuepercentflow' => $valuepercentflow,
         'cents2flow' => $cents2flow,
         'percentflow' => $percent,
-        'subtotalflow' => $value_base,
+        'subtotalflow' => $subtotalflow,
         'totalflow' => $totalflow,
         'totaltopay' => $totaltopay
     ];
