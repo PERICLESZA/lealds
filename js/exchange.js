@@ -16,7 +16,7 @@ async function loadExchangePercent() {
     .then(res => res.json())
     .then(data => {
       exchangePercent = parseFloat(data.percent) || 0;
-      console.log('Percent carregado:', exchangePercent);
+      // console.log('Percent carregado:', exchangePercent);
     });
 }
 
@@ -120,12 +120,12 @@ function handleCustomerSelection(inputValue, customers, hiddenInput, outputSpan)
     hiddenInput.value = selected.idcustomer;
     outputSpan.textContent = selected.name;
     preencherDataHoraAtual();
-    console.log("Cliente selecionado:", selected);
+    // console.log("Cliente selecionado:", selected);
   } else {
     hiddenInput.value = '';
     outputSpan.textContent = '';
     clearCashflowTable();
-    console.log("Nenhum cliente corresponde à entrada.");
+    // console.log("Nenhum cliente corresponde à entrada.");
   }
 }
 
@@ -135,7 +135,10 @@ function fetchCashflowData(idcustomer) {
 }
 
 function updateCashflowTable(data) {
+  // console.log(data);
+
   const tbody = document.getElementById('customer_data');
+
   tbody.innerHTML = '';
 
   let totalflowAcumulado = 0;
@@ -198,7 +201,11 @@ function createCashflowRow(row, index, data) {
     <td>${horaFormatada}</td>
     <td class="totalflow">${baseTotalflow.toFixed(2)}</td>
     <td class="totaltopay">${baseTotaltopay.toFixed(2)}</td>
-    <td><button class="delete-btn" data-id="${row.idcashflow}"><i class="fas fa-trash-alt delete-icon" title="Excluir"></i></button></td>
+    <td>
+        <button class="delete-btn" data-id="${row.idcashflow}">
+          <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
+        </button>
+    </td>
   `;
 
   tr.innerHTML = trHtml;
@@ -239,52 +246,38 @@ function addWireCheckboxHandler(tr, data, index) {
 function addDeleteButtonHandler(tr, idcashflow) {
   const btn = tr.querySelector('.delete-btn');
   if (!btn) {
-    console.warn('Botão delete não encontrado no <tr>', tr);
+    console.warn('Botão delete não encontrado:', tr);
     return;
   }
 
   btn.addEventListener('click', () => {
-    if (confirm('Confirma a exclusão deste lançamento?')) {
-      deleteCashflowEntry(idcashflow);
+    // console.log('ID passado para deleteCashflowEntry:', idcashflow);
+    if (!idcashflow || isNaN(idcashflow)) {
+      alert('ID inválido');
+      return;
     }
+    deleteCashflowEntry(idcashflow);
   });
 }
 
 function deleteCashflowEntry(idcashflow) {
-
-  console.log("deleteCashflowEntry", idcashflow);
-
-  if (!idcashflow || isNaN(idcashflow)) {
-    alert('ID inválido para exclusão');
-    return;
-  }
-
-  console.log('delete id: ', idcashflow);
+  // console.log("Chamando backend com ID:", idcashflow); // deve mostrar um número
 
   fetch(`../controller/exchangeController.php?action=delete&id=${idcashflow}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
   })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(result => {
       if (result.success) {
-        alert('Lançamento excluído com sucesso!');
-        // Recarrega os dados após exclusão
+        alert("Excluído com sucesso!");
         const idCustomer = document.getElementById('idcustomer').value;
-        if (idCustomer) {
-          fetchCashflowData(idCustomer)
-            .then(updateCashflowTable)
-            .catch(err => console.error('Erro ao atualizar tabela:', err));
-        }
+        fetchCashflowData(idCustomer).then(updateCashflowTable);
       } else {
-        alert('Erro ao excluir: ' + result.error);
+        alert('Erro: ' + result.error);
       }
     })
-    .catch(error => {
-      console.error('Erro na exclusão:', error);
-      alert('Erro inesperado ao excluir.');
+    .catch(err => {
+      console.error("Erro na exclusão:", err);
     });
 }
 
@@ -378,8 +371,8 @@ function enableInsertOnEnter() {
           tfElem.value = Number(result.totalflow).toFixed(2);
           tpElem.value = Number(result.totaltopay).toFixed(2);
   
-          console.log('Campo totalflow agora vale:', tfElem.value);
-          console.log('Campo totaltopay agora vale:', tpElem.value);
+          // console.log('Campo totalflow agora vale:', tfElem.value);
+          // console.log('Campo totaltopay agora vale:', tpElem.value);
   
           insertCashflow(result); // 👈 certifique-se que essa função não zera os campos também
         });
@@ -442,7 +435,7 @@ function initCustomerAutocomplete() {
 
     if (option) {
       hiddenId.value = option.dataset.id;
-      console.log("Cliente selecionado:", option.value, "ID:", hiddenId.value);
+      // console.log("Cliente selecionado:", option.value, "ID:", hiddenId.value);
     } else {
       hiddenId.value = '';
     }
@@ -483,7 +476,7 @@ function initBankAutocomplete() {
     const sel = banks.find(b => input.value === b.namebank);
     if (sel) {
       hiddenId.value = sel.idbank;
-      console.log("Banco selecionado:", sel);
+      // console.log("Banco selecionado:", sel);
     } else {
       hiddenId.value = '';
     }
@@ -520,7 +513,7 @@ function loadWireValue() {
  * @returns {Promise<object>} - resultado dos cálculos vindo do PHP
  */
 async function calculateCashflowValues(value, exchangePercent) {
-  console.log('Chamando cálculo PHP com:', { value, exchangePercent });
+  // console.log('Chamando cálculo PHP com:', { value, exchangePercent });
   const params = new URLSearchParams();
   params.append('action', 'calculate');
   params.append('value', value);

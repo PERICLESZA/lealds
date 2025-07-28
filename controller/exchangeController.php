@@ -106,7 +106,7 @@ function getCashflowByCustomer($conn)
         return;
     }
 
-    $sql = "SELECT valueflow, centsflow, percentflow, 
+    $sql = "SELECT idcashflow, valueflow, centsflow, percentflow, 
                    valuepercentflow, subtotalflow, cents2flow, 
                    wire, cashflowok, dtcashflow, tchaflow,
                    totalflow, totaltopay
