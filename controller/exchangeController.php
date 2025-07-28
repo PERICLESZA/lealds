@@ -36,7 +36,7 @@ switch ($action) {
     case 'calculate':
         $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
         $percent = isset($_POST['percent']) ? floatval($_POST['percent']) : 0;
-        $result = calculateCashflowValues($value, $percent);
+        $result = calculateCashflowValues($conn, $value, $percent);
         // header('Content-Type: application/json');
         echo json_encode($result);
         exit;
@@ -135,16 +135,36 @@ function getExchangeComission(PDO $conn): float
 }
 
 // 🧮 Calcula os campos com base no valor e percentual
-function calculateCashflowValues(float $value, float $percent): array
+function calculateCashflowValues($conn, float $value, float $percent): array
 {
     $centsflow = $value - floor($value);
     $value_base = floor($value);
     $valuepercentflow = round($value_base * ($percent / 100), 2);
-    $subtotalflow = $value_base - $valuepercentflow;
+    $tfWire = getWireValue($conn);
+
+    // $subtotalflow = $value_base - $valuepercentflow;
+    
+
+    if ($value <= 200) {
+        $valuepercentflow = 3;
+        $percent = 2;
+    } else {
+        $valuepercentflow = round(($value * ($percent / 100)), 2); // 2.36 * 1.50 % = 0.03
+        $valuepercentflow = ($percent == 0) ? 3 : $valuepercentflow;
+        $valuepercentflow = number_format($valuepercentflow, 2);
+    }
+
+    // $totalflow = $value - ($centsflow - $valuepercentflow);
+    // $totaltopay = $value - $totalflow;
+
+    $subtotalflow = number_format($value - ($centsflow + $valuepercentflow), 2); // 2.36 - 0.36 - 0.04 = 1.96
+    
     $cents2flow = $subtotalflow - floor($subtotalflow);
 
-    $totalflow = $centsflow + $cents2flow + $valuepercentflow;
-    $totaltopay = $value - $totalflow;
+    // Valor a receber
+    $totalflow = $centsflow + $cents2flow + $valuepercentflow ;
+    // Total a pagar
+    $totaltopay = $value - ($centsflow + $valuepercentflow + $cents2flow);
 
     return [
         'valueflow' => $value,
@@ -209,9 +229,9 @@ function insertCashflow(PDO $conn, array $data): bool
 function handleInsertCashflow(PDO $conn): void
 {
     $value = isset($_POST['value']) ? floatval($_POST['value']) : 0;
-
+    
     $percent = getExchangeComission($conn);
-    $cashflowData = calculateCashflowValues($value, $percent);
+    $cashflowData = calculateCashflowValues($conn, $value, $percent);
 
     // Gera a data e hora corretas no backend
     $dt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));

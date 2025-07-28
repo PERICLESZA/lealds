@@ -19,7 +19,7 @@
         <div class="cad-group top">
             <div class="input-container">
                 <label for="searchInput">Phone No/name:</label>
-                <input type="text" id="searchInput" autocomplete="off" /> <input type="hidden" id="idcustomer" name="idcustomer" />
+                <input type="text" id="searchInput" tabindex="-1" autocomplete="off" /> <input type="hidden" id="idcustomer" name="idcustomer" />
                 <ul id="autocompleteList" class="autocomplete-ul"></ul>
                 <span id="selectedCustomerName" style="display: none;"></span>
 
@@ -40,13 +40,13 @@
                 <div class="cad-group">
                     <div class="input-container">
                         <label for="searchCustomer">Company:</label>
-                        <input type="text" id="searchCustomer" list="customerList2" autocomplete="off" />
+                        <input type="text" id="searchCustomer" tabindex="-1" list="customerList2" autocomplete="off" />
                         <input type="hidden" id="fk_idcustomer" name="fk_idcustomer" />
                         <datalist id="customerList2"></datalist>
                     </div>
                     <div class="input-container">
                         <label for="searchBank">Our Bank:</label>
-                        <input type="text" id="searchBank" list="bankList" autocomplete="off" />
+                        <input type="text" id="searchBank" tabindex="-1" list="bankList" autocomplete="off" />
                         <input type="hidden" id="fk_idbankmaster" name="fk_idbankmaster" />
                         <datalist id="bankList"></datalist>
                     </div>
@@ -69,7 +69,7 @@
                     <img src="../cutomer_pic/5269caa7f7.JPG" alt="Foto do cliente" class="customer-image" />
                 </div> -->
             </div>
-            
+
             <!-- Tabela -->
             <div class="table-container">
                 <table border="0" class="table">

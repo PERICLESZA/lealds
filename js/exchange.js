@@ -163,7 +163,7 @@ function createCashflowRow(row, index, data) {
   const tr = document.createElement('tr');
   tr.dataset.idcashflow = row.idcashflow; 
 
-  const idcashflow = row.idcashflow; // <-- adicione isso aqui
+  // const idcashflow = row.idcashflow; // <-- adicione isso aqui
   const valueflow = Number(row.valueflow).toFixed(2);
   const centsflow = Number(row.centsflow).toFixed(2);
   const percentflow = row.percentflow ?? 0;
