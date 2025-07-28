@@ -136,6 +136,7 @@ function calculateCashflowValues(float $value, float $percent): array
         'valuepercentflow' => $valuepercentflow,
         'cents2flow' => $cents2flow,
         'percentflow' => $percent,
+        'subtotalflow' => $value_base,
         'totalflow' => $totalflow,
         'totaltopay' => $totaltopay
     ];
@@ -157,11 +158,10 @@ function insertCashflow(PDO $conn, array $data): bool
         INSERT INTO cashflow 
         (
             valueflow, centsflow, valuepercentflow, cents2flow, 
-            percentflow, totalflow, totaltopay, 
-            dtcashflow, tchaflow, 
+            percentflow, totalflow, totaltopay, dtcashflow, tchaflow, subtotalflow,
             fk_idcustomer, fk_idbankmaster
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     
     // echo "<pre>";
@@ -183,6 +183,7 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['totaltopay'],
         $dataAtual,  // <- agora correta
         $horaAtual,
+        $data['subtotalflow'],
         $data['fk_idcustomer'],
         $data['fk_idbankmaster']
     ]);

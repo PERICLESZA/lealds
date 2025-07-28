@@ -191,7 +191,9 @@ function updateCashflowTable(data) {
         <input type="checkbox" class="wire-check" data-index="${index}">
         <span class="wire-amount">${wireValue.toFixed(2)}</span>
       </td>
-      <td>${row.cashflowok}</td>
+      <td>
+        <input type="checkbox" class="cashflowok-check" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
+      </td>
       <td>${dataFormatada}</td>
       <td>${horaFormatada}</td>
       <td class="totalflow">${baseTotalflow}</td>
@@ -200,7 +202,31 @@ function updateCashflowTable(data) {
     tr.innerHTML = trHtml;
     tbody.appendChild(tr);
 
-    // ✅ Evento de alteração no checkbox
+    // 🧩 Evento de alteração no checkbox cashflowok
+      tr.querySelector('.cashflowok-check').addEventListener('change', function () {
+        const isChecked = this.checked ? 1 : 0;
+        const id = this.dataset.id;
+
+        fetch('../controller/exchangeController.php?action=updateCashflowOk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idcashflow: id, cashflowok: isChecked })
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            console.log('Atualizado com sucesso');
+          } else {
+            console.error('Erro ao atualizar:', result.message);
+            alert('Erro ao atualizar o status.');
+          }
+        })
+        .catch(error => {
+          console.error('Erro na requisição:', error);
+        });
+      });
+
+    // ✅ Evento de alteração no checkbox wire
     tr.querySelector('.wire-check').addEventListener('change', function () {
       let totalflowFinal = 0;
       let totaltopayFinal = 0;
@@ -250,6 +276,7 @@ async function insertCashflow(calculated) {
   const fk_idcustomer = document.getElementById('idcustomer').value;
   const fk_idbankmaster = document.getElementById('fk_idbankmaster').value;
   const tchaflow = document.getElementById('tchaflow').value;
+  const subtotalflow = calculated.subtotalflow;
 
   const backendResult = await calcularTotaisNoBackend(value);
   if (!backendResult) return;
@@ -266,7 +293,8 @@ async function insertCashflow(calculated) {
     dtcashflow,
     tchaflow,
     fk_idcustomer,
-    fk_idbankmaster
+    fk_idbankmaster,
+    subtotalflow
   });
 
   fetch('../controller/exchangeController.php', {
@@ -501,6 +529,8 @@ async function calcularTotaisNoBackend(value) {
   return response.json(); // { totalflow, totaltopay }
 }
 
+// Atualiza o total 
+// Atualiza o total com formatação brasileira
 function updateTotalsFromTable() {
   let totalflowSum = 0;
   let totaltopaySum = 0;
@@ -513,6 +543,14 @@ function updateTotalsFromTable() {
     totaltopaySum += parseFloat(cell.textContent.replace(',', '.')) || 0;
   });
 
-  document.getElementById('totalflow').value = totalflowSum.toFixed(2);
-  document.getElementById('totaltopay').value = totaltopaySum.toFixed(2);
+  // Formata e atualiza os campos com separador de milhar e decimal brasileiro
+  document.getElementById('totalflow').value = totalflowSum.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  document.getElementById('totaltopay').value = totaltopaySum.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 }
