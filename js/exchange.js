@@ -160,6 +160,7 @@ function createCashflowRow(row, index, data) {
   const tr = document.createElement('tr');
   tr.dataset.idcashflow = row.idcashflow; 
 
+  const idcashflow = row.idcashflow; // <-- adicione isso aqui
   const valueflow = Number(row.valueflow).toFixed(2);
   const centsflow = Number(row.centsflow).toFixed(2);
   const percentflow = row.percentflow ?? 0;
@@ -236,7 +237,13 @@ function addWireCheckboxHandler(tr, data, index) {
 }
 
 function addDeleteButtonHandler(tr, idcashflow) {
-  tr.querySelector('.delete-btn').addEventListener('click', () => {
+  const btn = tr.querySelector('.delete-btn');
+  if (!btn) {
+    console.warn('Botão delete não encontrado no <tr>', tr);
+    return;
+  }
+
+  btn.addEventListener('click', () => {
     if (confirm('Confirma a exclusão deste lançamento?')) {
       deleteCashflowEntry(idcashflow);
     }
@@ -245,10 +252,14 @@ function addDeleteButtonHandler(tr, idcashflow) {
 
 function deleteCashflowEntry(idcashflow) {
 
+  console.log("deleteCashflowEntry", idcashflow);
+
   if (!idcashflow || isNaN(idcashflow)) {
     alert('ID inválido para exclusão');
     return;
   }
+
+  console.log('delete id: ', idcashflow);
 
   fetch(`../controller/exchangeController.php?action=delete&id=${idcashflow}`, {
     method: 'GET',

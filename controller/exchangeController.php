@@ -52,14 +52,6 @@ switch ($action) {
 // ❌ Exclusão de lançamento
 function deleteCashflowById($conn, $id)
 {
-    include '../db/connection.php'; // ou use global $conn;
-
-    // global $conn; // se você já declarou antes
-
-    if (!$conn) {
-        return ['success' => false, 'error' => 'Erro de conexão com o banco.'];
-    }
-
     try {
         $stmt = $conn->prepare("DELETE FROM cashflow WHERE idcashflow = ?");
         $stmt->execute([$id]);
