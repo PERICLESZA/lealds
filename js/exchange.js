@@ -206,7 +206,7 @@ function createCashflowRow(row, index, data) {
     <td>${subtotalflow}</td>
     <td>${cents2flow}</td>
     <td>
-      <input type="checkbox" class="wire-check" data-index="${index}">
+      <input type="checkbox" class="wire-check" data-index="${index}" ${row.wire == 1 ? 'checked' : ''}>
       <span class="wire-amount">${wireValue.toFixed(2)}</span>
     </td>
     <td>
@@ -263,20 +263,27 @@ function addWireCheckboxHandler(tr, rowData) {
   const flowCell = tr.querySelector('.totalflow');
 
   checkbox.addEventListener('change', () => {
-    const tfOriginal = parseFloat(rowData.totalflow) || 0;
+    const totalSemWire = parseFloat(rowData.totalflow) - (parseFloat(rowData.valuewire) || 0);
+    let novoTotal;
 
-    // Se marcado, soma o wire ao totalflow; se desmarcado, volta ao valor original
-    const novoTotal = checkbox.checked
-      ? tfOriginal + wireValue
-      : tfOriginal;
+    if (checkbox.checked) {
+      rowData.wire = 1;
+      rowData.valuewire = wireValue;
+      novoTotal = totalSemWire + wireValue;
+    } else {
+      rowData.wire = 0;
+      rowData.valuewire = 0;
+      novoTotal = totalSemWire;
+    }
 
-    // Atualiza apenas a célula da linha com o novo valor formatado
     flowCell.textContent = novoTotal.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
     });
 
-    // ✅ Atualiza também os totais gerais no final (somando todas as linhas)
+    rowData.totalflow = novoTotal;
+
     updateTotalsFromTable();
+    saveOrUpdateCashflow(rowData);
   });
 }
 
@@ -602,4 +609,58 @@ function updateTotalsFromTable() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+}
+
+function updateWireInDatabase(idcashflow, isChecked) {
+  const action = isChecked ? 'add_wire' : 'remove_wire';
+
+  fetch(`../controller/exchangeController.php?action=${action}&id=${idcashflow}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(res => res.json())
+    .then(result => {
+      if (!result.success) {
+        alert('Erro ao atualizar wire: ' + result.error);
+      }
+    })
+    .catch(() => alert('Erro na requisição de wire.'));
+}
+
+function saveOrUpdateCashflow(rowData) {
+  const formData = new URLSearchParams({
+    action: 'update',
+    idcashflow: rowData.idcashflow,
+    valueflow: rowData.valueflow,
+    centsflow: rowData.centsflow,
+    percentflow: rowData.percentflow,
+    valuepercentflow: rowData.valuepercentflow,
+    subtotalflow: rowData.subtotalflow,
+    cents2flow: rowData.cents2flow,
+    totalflow: rowData.totalflow,
+    totaltopay: rowData.totaltopay,
+    wire: rowData.wire,
+    valuewire: rowData.valuewire,
+    cashflowok: rowData.cashflowok ?? 0,
+    dtcashflow: rowData.dtcashflow,
+    tchaflow: rowData.tchaflow,
+    fk_idcustomer: rowData.fk_idcustomer,
+    fk_idbankmaster: rowData.fk_idbankmaster
+  });
+
+  return fetch('../controller/exchangeController.php', {
+    method: 'POST',
+    body: formData
+  })
+    .then(res => res.json())
+    .then(response => {
+      if (!response.success) {
+        console.warn('Erro ao salvar wire:', response.error);
+      }
+    })
+    .catch(err => {
+      console.error('Erro ao salvar registro:', err);
+    });
 }

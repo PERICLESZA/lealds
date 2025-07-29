@@ -46,6 +46,19 @@ switch ($action) {
         $result = deleteCashflowById($conn, $idcashflow);
         echo json_encode($result);
         exit;
+    case 'update_wire':
+        updateWireAndRecalculate($conn);
+        exit;
+    case 'add_wire':
+        echo json_encode(updateWireValue($conn, $_GET['id'] ?? 0, true));
+        break;
+    case 'remove_wire':
+        echo json_encode(updateWireValue($conn, $_GET['id'] ?? 0, false));
+        break;
+    case 'update':
+        echo json_encode(updateCashflow($conn, $_POST));
+        exit;
+
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
@@ -110,7 +123,7 @@ function getCashflowByCustomer($conn)
     $sql = "SELECT idcashflow, valueflow, centsflow, percentflow, 
                    valuepercentflow, subtotalflow, cents2flow, 
                    wire, cashflowok, dtcashflow, tchaflow,
-                   totalflow, totaltopay
+                   totalflow, totaltopay, valuewire
             FROM cashflow
             WHERE fk_idcustomer = :id
             ORDER BY dtcashflow DESC, tchaflow DESC";
@@ -136,36 +149,27 @@ function getExchangeComission(PDO $conn): float
 }
 
 // 🧮 Calcula os campos com base no valor e percentual
-function calculateCashflowValues($conn, float $value, float $percent): array
+function calculateCashflowValues($conn, float $value, float $percent, float $wire = 0): array
 {
     $centsflow = $value - floor($value);
-    $value_base = floor($value);
-    $valuepercentflow = round($value_base * ($percent / 100), 2);
-    $tfWire = getWireValue($conn);
-
-    // $subtotalflow = $value_base - $valuepercentflow;
-    
+    // $value_base = floor($value);
 
     if ($value <= 200) {
         $valuepercentflow = 3;
         $percent = 2;
     } else {
-        $valuepercentflow = round(($value * ($percent / 100)), 2); // 2.36 * 1.50 % = 0.03
+        $valuepercentflow = round(($value * ($percent / 100)), 2);
         $valuepercentflow = ($percent == 0) ? 3 : $valuepercentflow;
         $valuepercentflow = number_format($valuepercentflow, 2);
     }
 
-    // $totalflow = $value - ($centsflow - $valuepercentflow);
-    // $totaltopay = $value - $totalflow;
-
-    $subtotalflow = number_format($value - ($centsflow + $valuepercentflow), 2); // 2.36 - 0.36 - 0.04 = 1.96
-    
+    $subtotalflow = number_format($value - ($centsflow + $valuepercentflow), 2);
     $cents2flow = $subtotalflow - floor($subtotalflow);
 
     // Valor a receber
-    $totalflow = $centsflow + $cents2flow + $valuepercentflow ;
+    $totalflow = $centsflow + $cents2flow + $valuepercentflow + $wire;
     // Total a pagar
-    $totaltopay = $value - ($centsflow + $valuepercentflow + $cents2flow);
+    $totaltopay = $value - ($centsflow + $valuepercentflow + $cents2flow + $wire);
 
     return [
         'valueflow' => $value,
@@ -175,7 +179,8 @@ function calculateCashflowValues($conn, float $value, float $percent): array
         'percentflow' => $percent,
         'subtotalflow' => $subtotalflow,
         'totalflow' => $totalflow,
-        'totaltopay' => $totaltopay
+        'totaltopay' => $totaltopay,
+        'wire' => $wire
     ];
 }
 
@@ -248,4 +253,103 @@ function handleInsertCashflow(PDO $conn): void
 
     echo json_encode(['success' => $success]);
     exit;
+}
+
+function updateWireAndRecalculate(PDO $conn): void
+{
+    $idcashflow = $_POST['idcashflow'] ?? 0;
+    $useWire = $_POST['checked'] ?? false;
+
+    if (!$idcashflow) {
+        echo json_encode(['success' => false, 'error' => 'ID inválido']);
+        return;
+    }
+
+    // Buscar dados do registro
+    $stmt = $conn->prepare("SELECT valueflow FROM cashflow WHERE idcashflow = ?");
+    $stmt->execute([$idcashflow]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$row) {
+        echo json_encode(['success' => false, 'error' => 'Registro não encontrado']);
+        return;
+    }
+
+    $value = floatval($row['valueflow']);
+    $percent = getExchangeComission($conn);
+    $wire = $useWire ? getWireValue($conn) : 0;
+
+    // Recalcula os valores
+    $recalculated = calculateCashflowValues($conn, $value, $percent, $wire);
+
+    // Atualiza no banco
+    $update = $conn->prepare("UPDATE cashflow SET wire = ?, totalflow = ?, totaltopay = ? WHERE idcashflow = ?");
+    $success = $update->execute([
+        $wire,
+        $recalculated['totalflow'],
+        $recalculated['totaltopay'],
+        $idcashflow
+    ]);
+
+    echo json_encode(['success' => $success]);
+}
+
+function updateWireValue(PDO $conn, int $idcashflow, bool $add): array
+{
+    try {
+        $wireValue = getWireValue($conn);
+        $stmt = $conn->prepare("UPDATE cashflow SET valuewire = ?, wire = ? WHERE idcashflow = ?");
+        $stmt->execute([$add ? $wireValue : 0, $add ? 1 : 0, $idcashflow]);
+        return ['success' => true];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
+function updateCashflow(PDO $conn, array $data): array
+{
+    try {
+        $stmt = $conn->prepare("
+            UPDATE cashflow SET
+              valueflow = ?,
+              centsflow = ?,
+              percentflow = ?,
+              valuepercentflow = ?,
+              subtotalflow = ?,
+              cents2flow = ?,
+              totalflow = ?,
+              totaltopay = ?,
+              wire = ?,
+              valuewire = ?,
+              cashflowok = ?,
+              dtcashflow = ?,
+              tchaflow = ?,
+              fk_idcustomer = ?,
+              fk_idbankmaster = ?
+            WHERE idcashflow = ?
+        ");
+
+        $stmt->execute([
+            $data['valueflow'],
+            $data['centsflow'],
+            $data['percentflow'],
+            $data['valuepercentflow'],
+            $data['subtotalflow'],
+            $data['cents2flow'],
+            $data['totalflow'],
+            $data['totaltopay'],
+            $data['wire'],
+            $data['valuewire'],
+            $data['cashflowok'],
+            $data['dtcashflow'],
+            $data['tchaflow'],
+            $data['fk_idcustomer'],
+            $data['fk_idbankmaster'],
+            $data['idcashflow']
+        ]);
+
+        return ['success' => true];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
 }
