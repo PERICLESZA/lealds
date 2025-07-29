@@ -8,6 +8,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
+// Buscar o valor padrão do wire
+let wireValue = 0;
+
+async function loadWireValue() {
+  try {
+    const response = await fetch('../controller/exchangeController.php?action=wire_value');
+    const result = await response.json();
+    wireValue = parseFloat(result.value);
+    console.log('Wire value carregado:', wireValue);
+  } catch (error) {
+    console.error('Erro ao carregar wire value:', error);
+    wireValue = 0;
+  }
+}
+
 // Busca o percentual poadrão de desconto por cheque
 let exchangePercent = 0;
 
@@ -325,7 +340,6 @@ async function insertCashflow(calculated) {
 
   const { totalflow, totaltopay } = backendResult;
 
-  // Preencher os campos com os valores reais do backend:
   document.getElementById('totalflow').value = totalflow.toFixed(2);
   document.getElementById('totaltopay').value = totaltopay.toFixed(2);
 
@@ -338,6 +352,8 @@ async function insertCashflow(calculated) {
     fk_idbankmaster,
     subtotalflow
   });
+
+  formData.append('valuewire', wireValue); // ✅ aqui
 
   fetch('../controller/exchangeController.php', {
     method: 'POST',
@@ -518,20 +534,6 @@ function fetchBankSuggestions(term) {
   return fetch(url).then(res => res.json());
 }
 
-// Buscar o valor padrão do wire
-let wireValue = 0;
-
-async function loadWireValue() {
-  try {
-    const response = await fetch('../controller/exchangeController.php?action=wire_value');
-    const result = await response.json();
-    wireValue = parseFloat(result.value);
-    console.log('Wire value carregado:', wireValue);
-  } catch (error) {
-    console.error('Erro ao carregar wire value:', error);
-    wireValue = 0;
-  }
-}
 
 /**
  * Chama o backend para obter os valores calculados de cashflow

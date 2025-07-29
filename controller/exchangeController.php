@@ -196,9 +196,9 @@ function insertCashflow(PDO $conn, array $data): bool
         (
             valueflow, centsflow, valuepercentflow, cents2flow, 
             percentflow, totalflow, totaltopay, dtcashflow, tchaflow, subtotalflow,
-            fk_idcustomer, fk_idbankmaster
+            fk_idcustomer, fk_idbankmaster, valuewire
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     
     // echo "<pre>";
@@ -222,7 +222,8 @@ function insertCashflow(PDO $conn, array $data): bool
         $horaAtual,
         $data['subtotalflow'],
         $data['fk_idcustomer'],
-        $data['fk_idbankmaster']
+        $data['fk_idbankmaster'],
+        $data['valuewire']
     ]);
 }
 
@@ -241,7 +242,8 @@ function handleInsertCashflow(PDO $conn): void
 
     $cashflowData['fk_idcustomer'] = $_POST['fk_idcustomer'] ?? null;
     $cashflowData['fk_idbankmaster'] = $_POST['fk_idbankmaster'] ?? null;
-
+    $cashflowData['valuewire'] = isset($_POST['valuewire']) ? floatval($_POST['valuewire']) : 0;
+    
     $success = insertCashflow($conn, $cashflowData);
 
     echo json_encode(['success' => $success]);
