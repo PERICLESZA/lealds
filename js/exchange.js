@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', async () => {
+  await loadWireValue();
   initAutocomplete();
   initCustomerAutocomplete();
   initBankAutocomplete();
   await loadExchangePercent();  // aguarde aqui!
   enableInsertOnEnter();
-  loadWireValue();
 });
 
 
@@ -211,35 +211,57 @@ function createCashflowRow(row, index, data) {
   tr.innerHTML = trHtml;
 
   // Eventos
-  addWireCheckboxHandler(tr, data, index);
+  addWireCheckboxHandler(tr, row);
   addDeleteButtonHandler(tr, row.idcashflow);
 
   return tr;
 }
 
-function addWireCheckboxHandler(tr, data, index) {
-  tr.querySelector('.wire-check').addEventListener('change', function () {
-    let totalflowFinal = 0;
-    let totaltopayFinal = 0;
+// function addWireCheckboxHandler(tr, data, index) {
+//   tr.querySelector('.wire-check').addEventListener('change', function () {
+//     let totalflowFinal = 0;
+//     let totaltopayFinal = 0;
 
-    const allRows = document.querySelectorAll('#customer_data tr');
-    allRows.forEach((rowEl, i) => {
-      const isChecked = rowEl.querySelector('.wire-check').checked;
-      const rowData = data[i];
-      const tf = parseFloat(rowData.totalflow) || 0;
-      const tp = parseFloat(rowData.totaltopay) || 0;
+//     const allRows = document.querySelectorAll('#customer_data tr');
+//     allRows.forEach((rowEl, i) => {
+//       const isChecked = rowEl.querySelector('.wire-check').checked;
+//       const rowData = data[i];
+//       const tf = parseFloat(rowData.totalflow) || 0;
+//       const tp = parseFloat(rowData.totaltopay) || 0;
 
-      if (isChecked) {
-        totalflowFinal += tf + wireValue;
-        totaltopayFinal += tp - wireValue;
-      } else {
-        totalflowFinal += tf;
-        totaltopayFinal += tp;
-      }
+//       if (isChecked) {
+//         totalflowFinal += tf + wireValue;
+//         totaltopayFinal += tp - wireValue;
+//       } else {
+//         totalflowFinal += tf;
+//         totaltopayFinal += tp;
+//       }
+//     });
+
+//     document.getElementById('totalflow').value = totalflowFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+//     document.getElementById('totaltopay').value = totaltopayFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+//   });
+// }
+
+function addWireCheckboxHandler(tr, rowData) {
+  const checkbox = tr.querySelector('.wire-check');
+  const flowCell = tr.querySelector('.totalflow');
+
+  checkbox.addEventListener('change', () => {
+    const tfOriginal = parseFloat(rowData.totalflow) || 0;
+
+    // Se marcado, soma o wire ao totalflow; se desmarcado, volta ao valor original
+    const novoTotal = checkbox.checked
+      ? tfOriginal + wireValue
+      : tfOriginal;
+
+    // Atualiza apenas a célula da linha com o novo valor formatado
+    flowCell.textContent = novoTotal.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
     });
 
-    document.getElementById('totalflow').value = totalflowFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-    document.getElementById('totaltopay').value = totaltopayFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+    // ✅ Atualiza também os totais gerais no final (somando todas as linhas)
+    updateTotalsFromTable();
   });
 }
 
@@ -499,11 +521,16 @@ function fetchBankSuggestions(term) {
 // Buscar o valor padrão do wire
 let wireValue = 0;
 
-function loadWireValue() {
-  fetch('../controller/exchangeController.php?action=wire_value')
-    .then(res => res.json())
-    .then(data => wireValue = parseFloat(data.wire || 0))
-    .catch(err => console.error('Erro ao obter valor do wire:', err));
+async function loadWireValue() {
+  try {
+    const response = await fetch('../controller/exchangeController.php?action=wire_value');
+    const result = await response.json();
+    wireValue = parseFloat(result.value);
+    console.log('Wire value carregado:', wireValue);
+  } catch (error) {
+    console.error('Erro ao carregar wire value:', error);
+    wireValue = 0;
+  }
 }
 
 /**

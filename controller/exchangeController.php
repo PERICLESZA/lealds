@@ -27,7 +27,8 @@ switch ($action) {
         searchBank($conn);
         break;
     case 'wire_value':
-        echo getWireValue($conn);
+        $valor = getWireValue($conn);
+        echo json_encode(['success' => true, 'value' => $valor]);
         break;
     case 'exchangepercent':
         $p = getExchangeComission($conn);      // ou PDO dependendo da configuração
@@ -65,7 +66,7 @@ function getWireValue($conn)
 {
     $stmt = $conn->query("SELECT exchange_vl_wire FROM parameters LIMIT 1");
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return json_encode(['wire' => $result['exchange_vl_wire'] ?? 0]);
+    return floatval($result['exchange_vl_wire'] ?? 0);
 }
 
 function searchBank($conn)
