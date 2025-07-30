@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initBankAutocomplete();
   await loadExchangePercent();  // aguarde aqui!
   enableInsertOnEnter();
+  initExchangeRowSave();
 });
 
 
@@ -174,31 +175,40 @@ function updateCashflowTable(data) {
 }
 
 function createCashflowRow(row, index, data) {
-
   const tr = document.createElement('tr');
-  tr.dataset.idcashflow = row.idcashflow; 
+  tr.dataset.idcashflow = row.idcashflow;
 
-  // const idcashflow = row.idcashflow; // <-- adicione isso aqui
   const valueflow = Number(row.valueflow).toFixed(2);
   const centsflow = Number(row.centsflow).toFixed(2);
   const percentflow = row.percentflow ?? 0;
   const valuepercentflow = Number(row.valuepercentflow).toFixed(2);
   const subtotalflow = Number(row.subtotalflow).toFixed(2);
   const cents2flow = Number(row.cents2flow).toFixed(2);
-  const baseTotalflow = parseFloat(row.totalflow) || 0;
-  const baseTotaltopay = parseFloat(row.totaltopay) || 0;
+  const totalflow = parseFloat(row.totalflow) || 0;
+  const totaltopay = parseFloat(row.totaltopay) || 0;
+  const wire = index;
+  const valuewire = parseFloat(row.wireValue) || 0;
 
-  const dataFormatada = row.dtcashflow
-    ? new Date(row.dtcashflow).toLocaleDateString('pt-BR')
-    : '';
-  const horaFormatada = row.tchaflow
-    ? new Date(`1970-01-01T${row.tchaflow}`).toLocaleTimeString('pt-BR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : '';
+  const dtcashflow = row.dtcashflow ?? '';
+  const tchaflow = row.tchaflow ?? '';
 
   const trHtml = `
+    <!-- Campos ocultos com name para envio -->
+    <input type="hidden" name="idcashflow" value="${row.idcashflow}">
+    <input type="hidden" name="valueflow" value="${valueflow}">
+    <input type="hidden" name="centsflow" value="${centsflow}">
+    <input type="hidden" name="percentflow" value="${percentflow}">
+    <input type="hidden" name="valuepercentflow" value="${valuepercentflow}">
+    <input type="hidden" name="subtotalflow" value="${subtotalflow}">
+    <input type="hidden" name="cents2flow" value="${cents2flow}">
+    <input type="hidden" name="dtcashflow" value="${dtcashflow}">
+    <input type="hidden" name="tchaflow" value="${tchaflow}">
+    <input type="hidden" name="totalflow" value="${totalflow.toFixed(2)}">
+    <input type="hidden" name="totaltopay" value="${totaltopay.toFixed(2)}">
+    <input type="hidden" name="valuewire" value="${wireValue.toFixed(2)}">
+    <input type="hidden" name="wire" value="${wireValue.toFixed(2)}">
+
+    <!-- Colunas visuais -->
     <td>${valueflow}</td>
     <td>${centsflow}</td>
     <td>${percentflow}</td>
@@ -206,16 +216,16 @@ function createCashflowRow(row, index, data) {
     <td>${subtotalflow}</td>
     <td>${cents2flow}</td>
     <td>
-      <input type="checkbox" class="wire-check" data-index="${index}" ${row.wire == 1 ? 'checked' : ''}>
+      <input type="checkbox" class="wire-check" name="wire" data-index="${index}" ${row.wire == 1 ? 'checked' : ''}>
       <span class="wire-amount">${wireValue.toFixed(2)}</span>
     </td>
     <td>
-      <input type="checkbox" class="cashflowok-check" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
+      <input type="checkbox" class="cashflowok-check" name="cashflowok" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
     </td>
-    <td>${dataFormatada}</td>
-    <td>${horaFormatada}</td>
-    <td class="totalflow">${baseTotalflow.toFixed(2)}</td>
-    <td class="totaltopay">${baseTotaltopay.toFixed(2)}</td>
+    <td>${new Date(dtcashflow).toLocaleDateString('pt-BR')}</td>
+    <td>${new Date(`1970-01-01T${tchaflow}`).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
+    <td class="totalflow">${totalflow.toFixed(2)}</td>
+    <td class="totaltopay">${totaltopay.toFixed(2)}</td>
     <td>
         <button class="delete-btn" data-id="${row.idcashflow}">
           <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
@@ -263,27 +273,20 @@ function addWireCheckboxHandler(tr, rowData) {
   const flowCell = tr.querySelector('.totalflow');
 
   checkbox.addEventListener('change', () => {
-    const totalSemWire = parseFloat(rowData.totalflow) - (parseFloat(rowData.valuewire) || 0);
-    let novoTotal;
+    const tfOriginal = parseFloat(rowData.totalflow) || 0;
 
-    if (checkbox.checked) {
-      rowData.wire = 1;
-      rowData.valuewire = wireValue;
-      novoTotal = totalSemWire + wireValue;
-    } else {
-      rowData.wire = 0;
-      rowData.valuewire = 0;
-      novoTotal = totalSemWire;
-    }
+    // Se marcado, soma o wire ao totalflow; se desmarcado, volta ao valor original
+    const novoTotal = checkbox.checked
+      ? tfOriginal + wireValue
+      : tfOriginal;
 
+    // Atualiza apenas a célula da linha com o novo valor formatado
     flowCell.textContent = novoTotal.toLocaleString('pt-BR', {
       minimumFractionDigits: 2,
     });
 
-    rowData.totalflow = novoTotal;
-
+    // ✅ Atualiza também os totais gerais no final (somando todas as linhas)
     updateTotalsFromTable();
-    saveOrUpdateCashflow(rowData);
   });
 }
 
@@ -611,56 +614,44 @@ function updateTotalsFromTable() {
   });
 }
 
-function updateWireInDatabase(idcashflow, isChecked) {
-  const action = isChecked ? 'add_wire' : 'remove_wire';
+async function saveExchangeRow(row) {
+  const inputs = row.querySelectorAll('input, select');
+  const data = {};
 
-  fetch(`../controller/exchangeController.php?action=${action}&id=${idcashflow}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => res.json())
-    .then(result => {
-      if (!result.success) {
-        alert('Erro ao atualizar wire: ' + result.error);
+  inputs.forEach(input => {
+    if (input.name) {
+      if (input.type === 'checkbox') {
+        data[input.name] = input.checked ? 1 : 0;
+      } else {
+        data[input.name] = input.value;
       }
-    })
-    .catch(() => alert('Erro na requisição de wire.'));
-}
-
-function saveOrUpdateCashflow(rowData) {
-  const formData = new URLSearchParams({
-    action: 'update',
-    idcashflow: rowData.idcashflow,
-    valueflow: rowData.valueflow,
-    centsflow: rowData.centsflow,
-    percentflow: rowData.percentflow,
-    valuepercentflow: rowData.valuepercentflow,
-    subtotalflow: rowData.subtotalflow,
-    cents2flow: rowData.cents2flow,
-    totalflow: rowData.totalflow,
-    totaltopay: rowData.totaltopay,
-    wire: rowData.wire,
-    valuewire: rowData.valuewire,
-    cashflowok: rowData.cashflowok ?? 0,
-    dtcashflow: rowData.dtcashflow,
-    tchaflow: rowData.tchaflow,
-    fk_idcustomer: rowData.fk_idcustomer,
-    fk_idbankmaster: rowData.fk_idbankmaster
+    }
   });
 
-  return fetch('../controller/exchangeController.php', {
-    method: 'POST',
-    body: formData
-  })
-    .then(res => res.json())
-    .then(response => {
-      if (!response.success) {
-        console.warn('Erro ao salvar wire:', response.error);
-      }
-    })
-    .catch(err => {
-      console.error('Erro ao salvar registro:', err);
+  try {
+    const response = await fetch('../controller/exchangeController.php?action=saveexchange', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     });
+
+    const result = await response.json();
+    if (result.success) {
+      console.log('Linha salva com sucesso.');
+    } else {
+      console.error('Erro ao salvar:', result.message);
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+  }
+}
+
+// Inicia a initExchangeRowSave
+function initExchangeRowSave() {
+  document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('wire-check') || e.target.classList.contains('cashflowok-check')) {
+      const row = e.target.closest('tr');
+      saveExchangeRow(row);
+    }
+  });
 }
