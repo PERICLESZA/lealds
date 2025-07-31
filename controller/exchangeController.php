@@ -115,7 +115,7 @@ function getCashflowByCustomer($conn)
                    wire, cashflowok, dtcashflow, tchaflow,
                    totalflow, totaltopay, valuewire
             FROM cashflow
-            WHERE fk_idcustomer = :id
+            WHERE fk_idcustomer = :id AND excluido = 0
             ORDER BY dtcashflow DESC, tchaflow DESC";
 
     $stmt = $conn->prepare($sql);
