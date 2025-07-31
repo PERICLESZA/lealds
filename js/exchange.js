@@ -206,7 +206,7 @@ function createCashflowRow(row, index, data) {
     <input type="hidden" name="totalflow" value="${totalflow.toFixed(2)}">
     <input type="hidden" name="totaltopay" value="${totaltopay.toFixed(2)}">
     <input type="hidden" name="valuewire" value="${wireValue.toFixed(2)}">
-    <input type="hidden" name="wire" value="${wireValue.toFixed(2)}">
+    <input type="hidden" name="wire" value="${wire}">
 
     <!-- Colunas visuais -->
     <td>${valueflow}</td>

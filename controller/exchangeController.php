@@ -46,6 +46,9 @@ switch ($action) {
         $result = deleteCashflowById($conn, $idcashflow);
         echo json_encode($result);
         exit;
+    case 'saveexchange':
+        saveExchange($conn);
+        exit;
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
@@ -250,9 +253,8 @@ function handleInsertCashflow(PDO $conn): void
     exit;
 }
 
-function saveExchange()
+function saveExchange($conn)
 {
-    include_once '../model/connection.php';
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (!$data || !isset($data['idcashflow'])) {
@@ -260,48 +262,51 @@ function saveExchange()
         return;
     }
 
-    $stmt = $conn->prepare("
-    UPDATE cashflow SET
-      valueflow = ?, 
-      centsflow = ?, 
-      percentflow = ?, 
-      valuepercentflow = ?, 
-      subtotalflow = ?, 
-      cents2flow = ?, 
-      wire = ?, 
-      cashflowok = ?, 
-      dtcashflow = ?, 
-      tchaflow = ?, 
-      totalflow = ?, 
-      totaltopay = ?, 
-      valuewire = ?
-    WHERE idcashflow = ?
-  ");
-
-    $stmt->bind_param(
-        "ddddddiiissddi",
-        $data['valueflow'],
-        $data['centsflow'],
-        $data['percentflow'],
-        $data['valuepercentflow'],
-        $data['subtotalflow'],
-        $data['cents2flow'],
-        $data['wire'],
-        $data['cashflowok'],
-        $data['dtcashflow'],
-        $data['tchaflow'],
-        $data['totalflow'],
-        $data['totaltopay'],
-        $data['valuewire'],
-        $data['idcashflow']
-    );
-
-    if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => $stmt->error]);
+    // 🔁 Se wire for 0, zera valuewire
+    if (intval($data['wire']) === 0) {
+        $data['valuewire'] = 0;
     }
 
-    $stmt->close();
-    $conn->close();
+    try {
+        $sql = "
+      UPDATE cashflow SET
+        valueflow = :valueflow,
+        centsflow = :centsflow,
+        percentflow = :percentflow,
+        valuepercentflow = :valuepercentflow,
+        subtotalflow = :subtotalflow,
+        cents2flow = :cents2flow,
+        wire = :wire,
+        cashflowok = :cashflowok,
+        dtcashflow = :dtcashflow,
+        tchaflow = :tchaflow,
+        totalflow = :totalflow,
+        totaltopay = :totaltopay,
+        valuewire = :valuewire
+      WHERE idcashflow = :idcashflow
+    ";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindValue(':valueflow', $data['valueflow']);
+        $stmt->bindValue(':centsflow', $data['centsflow']);
+        $stmt->bindValue(':percentflow', $data['percentflow']);
+        $stmt->bindValue(':valuepercentflow', $data['valuepercentflow']);
+        $stmt->bindValue(':subtotalflow', $data['subtotalflow']);
+        $stmt->bindValue(':cents2flow', $data['cents2flow']);
+        $stmt->bindValue(':wire', $data['wire']);
+        $stmt->bindValue(':cashflowok', $data['cashflowok']);
+        $stmt->bindValue(':dtcashflow', $data['dtcashflow']);
+        $stmt->bindValue(':tchaflow', $data['tchaflow']);
+        $stmt->bindValue(':totalflow', $data['totalflow']);
+        $stmt->bindValue(':totaltopay', $data['totaltopay']);
+        $stmt->bindValue(':valuewire', $data['valuewire']);
+        $stmt->bindValue(':idcashflow', $data['idcashflow']);
+
+        $stmt->execute();
+
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
 }
