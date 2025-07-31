@@ -57,7 +57,7 @@ switch ($action) {
 function deleteCashflowById($conn, $id)
 {
     try {
-        $stmt = $conn->prepare("DELETE FROM cashflow WHERE idcashflow = ?");
+        $stmt = $conn->prepare("UPDATE cashflow SET excluido = 1 WHERE idcashflow = ?");
         $stmt->execute([$id]);
         return ['success' => true];
     } catch (PDOException $e) {

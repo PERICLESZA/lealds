@@ -58,11 +58,19 @@
                         <label>Pay</label>
                         <input type="text" id="totaltopay" tabindex="-1" disabled />
                     </div>
-
                 </div>
-                <div class="input-container">
-                    <label for="valueInput">Value</label>
-                    <input type="text" id="valueInput" />
+                <div class="cad-group">
+                    <div class="input-container">
+                        <label for="valueInput">Value</label>
+                        <input type="text" id="valueInput" />
+                    </div>
+                    <div class="input-container">
+                        <label for="active">Filter OK</label>
+                        <select id="active">
+                            <option value="1">Yes</option>
+                            <option value="0" selected>No</option>
+                        </select>
+                    </div>
                 </div>
                 <!-- Imagem
                 <div class="image-container">
