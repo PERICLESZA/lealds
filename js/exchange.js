@@ -145,8 +145,8 @@ function handleCustomerSelection(inputValue, customers, hiddenInput, outputSpan)
   }
 }
 
-function fetchCashflowData(idcustomer) {
-  const url = `../controller/exchangeController.php?action=cashflow&id=${idcustomer}`;
+function fetchCashflowData(idcustomer,filterOk) {
+  const url = `../controller/exchangeController.php?action=cashflow&id=${idcustomer}&cashflowok=${filterOk}`;
   return fetch(url).then(res => res.json());
 }
 

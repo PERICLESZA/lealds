@@ -65,10 +65,11 @@
                         <input type="text" id="valueInput" />
                     </div>
                     <div class="input-container">
-                        <label for="active">Filter OK</label>
-                        <select id="active">
-                            <option value="1">Yes</option>
+                        <label for="filterOk">Filter OK</label>
+                        <select id="filterOk">
                             <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                            <option value="2">All</option>
                         </select>
                     </div>
                 </div>

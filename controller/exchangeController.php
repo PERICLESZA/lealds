@@ -105,6 +105,8 @@ function searchCustomer($conn)
 function getCashflowByCustomer($conn)
 {
     $id = $_GET['id'] ?? null;
+    $filterOk = $_GET['cashflowok'] ?? null; // novo filtro vindo da tela
+
     if (!$id) {
         echo json_encode(["error" => "ID não informado"]);
         return;
@@ -115,11 +117,25 @@ function getCashflowByCustomer($conn)
                    wire, cashflowok, dtcashflow, tchaflow,
                    totalflow, totaltopay, valuewire
             FROM cashflow
-            WHERE fk_idcustomer = :id AND excluido = 0
-            ORDER BY dtcashflow DESC, tchaflow DESC";
+            WHERE fk_idcustomer = :id AND excluido = 0";
+
+            // Aplica o filtro de cashflowok se for 0 ou 1 explicitamente
+            if ($filterOk === '0' || $filterOk === '1') {
+                $sql .= " AND cashflowok = :cashflowok";
+            }
+
+            $sql .= " ORDER BY dtcashflow DESC, tchaflow DESC";
 
     $stmt = $conn->prepare($sql);
     $stmt->execute([':id' => $id]);
+
+    if ($filterOk === '0' || $filterOk === '1') {
+        $stmt->bindValue(':cashflowok', $filterOk, PDO::PARAM_INT);
+    }
+
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }
 
