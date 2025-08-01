@@ -104,8 +104,10 @@ function searchCustomer($conn)
 // 🔍 Busca cashflow por cliente
 function getCashflowByCustomer($conn)
 {
+    error_log('[DEBUG] cashflowok recebido: ' . ($_GET['cashflowok'] ?? 'null'));
+
     $id = $_GET['id'] ?? null;
-    $filterOk = $_GET['cashflowok'] ?? null; // novo filtro vindo da tela
+    $filterOk = $_GET['cashflowok'] ?? null;
 
     if (!$id) {
         echo json_encode(["error" => "ID não informado"]);
@@ -119,24 +121,28 @@ function getCashflowByCustomer($conn)
             FROM cashflow
             WHERE fk_idcustomer = :id AND excluido = 0";
 
-            // Aplica o filtro de cashflowok se for 0 ou 1 explicitamente
-            if ($filterOk === '0' || $filterOk === '1') {
-                $sql .= " AND cashflowok = :cashflowok";
-            }
+    // Filtro adicional
+    if ($filterOk === '0' || $filterOk === '1') {
+        $sql .= " AND cashflowok = :cashflowok";
+    }
 
-            $sql .= " ORDER BY dtcashflow DESC, tchaflow DESC";
+    $sql .= " ORDER BY dtcashflow DESC, tchaflow DESC";
 
     $stmt = $conn->prepare($sql);
-    $stmt->execute([':id' => $id]);
 
+    // Sempre vincula o id
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+    // Só vincula o cashflowok se estiver filtrando
     if ($filterOk === '0' || $filterOk === '1') {
         $stmt->bindValue(':cashflowok', $filterOk, PDO::PARAM_INT);
     }
 
     $stmt->execute();
+
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+    echo json_encode($result);
 }
 
 // 🔧 Busca o percentual de comissão da tabela parameters

@@ -44,6 +44,7 @@ function initAutocomplete() {
   const hiddenId = document.getElementById('idcustomer');
   const selectedNameSpan = document.getElementById('selectedCustomerName');
   const list = document.getElementById('autocompleteList');
+  const filterOkSelect = document.getElementById('filterOk');
   let customers = [];
   let currentFocus = -1;
 
@@ -61,16 +62,19 @@ function initAutocomplete() {
             li.dataset.id = customer.idcustomer;
             li.setAttribute('data-index', index);
             li.classList.add('autocomplete-item');
+
             li.addEventListener('click', () => {
               input.value = li.textContent;
               hiddenId.value = li.dataset.id;
               selectedNameSpan.textContent = customer.name;
               list.innerHTML = '';
               preencherDataHoraAtual();
-              fetchCashflowData(customer.idcustomer)
+
+              fetchCashflowData(customer.idcustomer, getFilterOkValue())
                 .then(updateCashflowTable)
                 .catch(err => console.error('Erro ao carregar tabela:', err));
             });
+
             list.appendChild(li);
           });
         });
@@ -104,6 +108,23 @@ function initAutocomplete() {
     items[currentFocus].scrollIntoView({ block: 'nearest' });
   }
 
+  // ✅ Captura e interpreta o valor atual do filtro OK
+  function getFilterOkValue() {
+    const value = filterOkSelect.value;
+    return value === '2' ? '' : value;
+  }
+
+  // ✅ Atualiza a tabela ao mudar filtro
+  filterOkSelect.addEventListener('change', () => {
+    const idcustomer = hiddenId.value;
+    if (!idcustomer) return;
+
+    fetchCashflowData(idcustomer, getFilterOkValue())
+      .then(updateCashflowTable)
+      .catch(err => console.error('Erro ao atualizar com filtro OK:', err));
+  });
+
+  // Fecha lista ao clicar fora
   document.addEventListener('click', (e) => {
     if (!list.contains(e.target) && e.target !== input) {
       list.innerHTML = '';
@@ -145,8 +166,10 @@ function handleCustomerSelection(inputValue, customers, hiddenInput, outputSpan)
   }
 }
 
-function fetchCashflowData(idcustomer,filterOk) {
-  const url = `../controller/exchangeController.php?action=cashflow&id=${idcustomer}&cashflowok=${filterOk}`;
+function fetchCashflowData(idcustomer,cashflowok) {
+
+  const url = `../controller/exchangeController.php?action=cashflow&id=${idcustomer}&cashflowok=${cashflowok}`;
+  // console.log('[DEBUG] URL usada:', url); // 👈 Teste visual no console
   return fetch(url).then(res => res.json());
 }
 
@@ -636,11 +659,11 @@ async function saveExchangeRow(row) {
     });
 
     const result = await response.json();
-    if (result.success) {
-      console.log('Linha salva com sucesso.');
-    } else {
-      console.error('Erro ao salvar:', result.message);
-    }
+    // if (result.success) {
+    //   console.log('Linha salva com sucesso.');
+    // } else {
+    //   console.error('Erro ao salvar:', result.message);
+    // }
   } catch (error) {
     console.error('Erro na requisição:', error);
   }
