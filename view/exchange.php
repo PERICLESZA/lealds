@@ -72,10 +72,10 @@
                             <option value="2">All</option>
                         </select>
                     </div>
-                    <div class="input-container">
-                        <label>&nbsp;</label>
-                        <button id="btnPrintReceipt">Print Receipt</button>
-                    </div>
+                </div>
+                <div class="input-container">
+                    <button id="btnPrintReceipt">Print Receipt</button>
+                    <button id="btnShowPhoto">Show Photo</button>
                 </div>
                 <!-- Imagem
                 <div class="image-container">
@@ -153,6 +153,20 @@
 
             </div>
         </div>
+        <!-- MODAL DA FOTO DO CLIENTE -->
+        <div id="photoModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <button class="close-btn" onclick="closePhotoModal()">×</button>
+                <div id="photoContent" style="text-align: center;">
+                    <img id="customerPhoto" src="" alt="Foto do Cliente" style="max-width: 100%; max-height: 400px; border-radius: 10px; box-shadow: 0 0 8px #ccc;">
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <input type="file" id="changePhotoInput" accept=".jpg,.jpeg" style="display: none;">
+                    <button onclick="document.getElementById('changePhotoInput').click()">Change Photo</button>
+                </div>
+            </div>
+        </div>
+
         <script src="../js/exchange.js"></script>
         <script>
             function printReceipt() {
