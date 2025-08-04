@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadExchangePercent();  // aguarde aqui!
   enableInsertOnEnter();
   initExchangeRowSave();
+  // initPrintButton();
 });
 
 
@@ -677,4 +678,157 @@ function initExchangeRowSave() {
       saveExchangeRow(row);
     }
   });
+}
+
+// // Função para imprimir Recibo
+// function initPrintButton() {
+//   const btn = document.getElementById('btnPrintReceipt');
+//   if (!btn) return;
+
+//   btn.addEventListener('click', () => {
+//     const id = document.getElementById('idcustomer').value;
+//     const filterOk = document.getElementById('filterOk').value;
+//     if (!id) {
+//       alert('Selecione um cliente primeiro.');
+//       return;
+//     }
+
+//     const url = `../view/recibo.php?id=${id}&cashflowok=${filterOk}`;
+//     showReceiptModal(url);
+//   });
+// }
+
+// function showReceiptModal(url) {
+//   const modal = document.getElementById('receiptModal');
+//   const frame = document.getElementById('receiptFrame');
+//   frame.src = url;
+//   modal.classList.remove('hidden');
+// }
+
+// // Fecha modal
+// document.addEventListener('DOMContentLoaded', () => {
+//   const close = document.getElementById('btnCloseModal');
+//   close?.addEventListener('click', () => {
+//     document.getElementById('receiptModal').classList.add('hidden');
+//     document.getElementById('receiptFrame').src = ''; // limpa
+//   });
+// });
+
+// document.addEventListener('DOMContentLoaded', function () {
+//   const btnPrintReceipt = document.getElementById('btnPrintReceipt');
+//   const receiptModal = document.getElementById('receiptModal');
+//   const receiptFrame = document.getElementById('receiptFrame');
+//   const btnCloseModal = document.getElementById('btnCloseModal');
+
+//   btnPrintReceipt.addEventListener('click', function () {
+//     // Carrega o recibo dentro do iframe
+//     receiptFrame.src = '../view/recibo.php';
+//     // Exibe o modal
+//     receiptModal.classList.remove('hidden');
+//   });
+
+//   btnCloseModal.addEventListener('click', function () {
+//     receiptModal.classList.add('hidden');
+//     receiptFrame.src = ''; // limpa ao fechar
+//   });
+// });
+
+document.getElementById('btnPrintReceipt').addEventListener('click', async () => {
+  const id = document.getElementById('idcustomer').value;
+  const cashflowok = document.getElementById('filterOk').value;
+
+  if (!id) return alert('Selecione um cliente');
+
+  const data = await fetch(`../controller/reciboController.php?id=${id}&cashflowok=${cashflowok}`);
+  const json = await data.json();
+
+  renderReceipt(json);
+  openReceipt();
+});
+
+function renderReceipt(data) {
+  if (!data || data.error) return;
+
+  const rows = data.cashflows.map(row => `
+    <tr>
+      <td>R$ ${parseFloat(row.valueflow).toFixed(2).replace('.', ',')}</td>
+      <td>${row.percentflow}%</td>
+      <td>R$ ${parseFloat(row.subtotalflow).toFixed(2).replace('.', ',')}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('receiptContent').innerHTML = `
+    <h2>Recibo de Troca de Cheques</h2>
+    <p><strong>Cliente:</strong> ${data.customer.name}</p>
+    <p><strong>Data:</strong> ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString().slice(0,5)}</p>
+    <hr>
+    <table class="receipt-table">
+      <thead>
+        <tr><th>Valor</th><th>%</th><th>Subtotal</th></tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <hr>
+    <p><strong>Total a Pagar:</strong> R$ ${parseFloat(data.total).toFixed(2).replace('.', ',')}</p>
+    <p style="margin-top: 30px;">Assinatura: _________________________</p>
+  `;
+}
+
+function openReceipt() {
+  document.getElementById('receiptModal').classList.remove('hidden');
+}
+
+function closeReceipt() {
+  document.getElementById('receiptModal').classList.add('hidden');
+}
+
+function printReceipt() {
+  // const content = document.getElementById('receiptToPrint').innerHTML;
+
+  const printWindow = window.open('', '', 'width=300,height=600');
+  printWindow.document.write(`
+    <html>
+    <head>
+      <title>Imprimir Recibo</title>
+      <style>
+        body {
+          font-family: monospace;
+          font-size: 12px;
+          width: 240px;
+          margin: 0;
+          padding: 0;
+        }
+
+        h2 {
+          font-size: 14px;
+          text-align: center;
+          margin: 5px 0;
+        }
+
+        .receipt-table {
+          width: 100%;
+          font-size: 12px;
+          border-collapse: collapse;
+        }
+
+        .receipt-table th,
+        .receipt-table td {
+          padding: 2px 0;
+          border-bottom: 1px dashed #ccc;
+          text-align: left;
+        }
+
+        hr {
+          border: none;
+          border-top: 1px dashed #aaa;
+          margin: 8px 0;
+        }
+      </style>
+    </head>
+    <body onload="window.print(); setTimeout(() => window.close(), 100);">
+      ${content}
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
 }

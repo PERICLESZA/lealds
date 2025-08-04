@@ -63,3 +63,79 @@
     cursor: pointer;
 }
   
+
+/* modal */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    width: 260px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 0 10px #000;
+}
+
+.receipt-container {
+    font-family: monospace;
+    font-size: 12px;
+    width: 100%;
+}
+
+.receipt-container h2 {
+    text-align: center;
+    font-size: 16px;
+}
+
+.receipt-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+}
+
+.receipt-table th,
+.receipt-table td {
+    padding: 2px 0;
+    border-bottom: 1px dashed #ccc;
+    text-align: left;
+}
+
+hr {
+    border: none;
+    border-top: 1px dashed #aaa;
+    margin: 10px 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.print-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 5px;
+}

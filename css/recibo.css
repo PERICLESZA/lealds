@@ -1,0 +1,70 @@
+@media print {
+    * {
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+    }
+
+    body,
+    html {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 240px !important;
+        /* largura ideal da bobina */
+        height: auto !important;
+    }
+
+    .modal-overlay,
+    .modal-box,
+    .close-btn,
+    .print-btn {
+        display: none !important;
+    }
+
+    .receipt-container {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 240px !important;
+        font-family: monospace;
+        font-size: 12px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    h2 {
+        font-size: 14px;
+        text-align: center;
+        margin: 5px 0;
+    }
+
+    .receipt-table {
+        width: 100%;
+        font-size: 12px;
+        border-collapse: collapse;
+    }
+
+    .receipt-table th,
+    .receipt-table td {
+        padding: 2px 0;
+        border-bottom: 1px dashed #ccc;
+        text-align: left;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px dashed #aaa;
+        margin: 8px 0;
+    }
+}
+
+.modal-box {
+    background: white;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
