@@ -835,14 +835,16 @@ function printReceipt() {
 
 // modal todo do customer
 document.getElementById('btnShowPhoto').addEventListener('click', function () {
-    const fkId = document.getElementById('searchCustomer');
+  console.log('fk_idcustomer:', document.getElementById('idcustomer').value);
+
+    const fkId = document.getElementById('idcustomer').value;
     console.log(fkId);
     if (!fkId) {
         alert('Selecione um cliente primeiro.');
         return;
     }
 
-    const photoPath = `../cutomer_pic/${fkId}.JPG`; // cuidado: verifique se o nome da pasta está mesmo "cutomer_pic"
+    const photoPath = `../customer_pic/${fkId}.JPG`; // cuidado: verifique se o nome da pasta está mesmo "cutomer_pic"
 
     document.getElementById('customerPhoto').src = photoPath;
     document.getElementById('photoModal').classList.remove('hidden');
