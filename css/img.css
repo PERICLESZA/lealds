@@ -1,0 +1,45 @@
+.button-pair {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.button-pair button:first-child {
+    flex: 0 0 80%;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.button-pair button:last-child {
+    flex: 0 0 20%;
+    padding: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.camera-container {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    /* garante que o fundo fique visível no scroll */
+    padding-bottom: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+#camera {
+    border: 1px solid #ccc;
+    max-width: 100%;
+    height: auto;
+}
+
+.scrollable-buttons {
+    max-height: calc(100vh - 460px);
+    /* ajustável conforme altura do vídeo + botões fixos */
+    overflow-y: auto;
+    padding-top: 10px;
+}

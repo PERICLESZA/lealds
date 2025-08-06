@@ -233,6 +233,7 @@ function createCashflowRow(row, index, data) {
     <input type="hidden" name="wire" value="${wire}">
 
     <!-- Colunas visuais -->
+    <td>✏️</td>
     <td>${valueflow}</td>
     <td>${centsflow}</td>
     <td>${percentflow}</td>
@@ -251,9 +252,7 @@ function createCashflowRow(row, index, data) {
     <td class="totalflow">${totalflow.toFixed(2)}</td>
     <td class="totaltopay">${totaltopay.toFixed(2)}</td>
     <td>
-        <button class="delete-btn" data-id="${row.idcashflow}">
-          <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
-        </button>
+        <button class="delete-btn" data-id="${row.idcashflow}">🗑️</button>
     </td>
   `;
 
@@ -660,11 +659,6 @@ async function saveExchangeRow(row) {
     });
 
     const result = await response.json();
-    // if (result.success) {
-    //   console.log('Linha salva com sucesso.');
-    // } else {
-    //   console.error('Erro ao salvar:', result.message);
-    // }
   } catch (error) {
     console.error('Erro na requisição:', error);
   }
@@ -679,59 +673,6 @@ function initExchangeRowSave() {
     }
   });
 }
-
-// // Função para imprimir Recibo
-// function initPrintButton() {
-//   const btn = document.getElementById('btnPrintReceipt');
-//   if (!btn) return;
-
-//   btn.addEventListener('click', () => {
-//     const id = document.getElementById('idcustomer').value;
-//     const filterOk = document.getElementById('filterOk').value;
-//     if (!id) {
-//       alert('Selecione um cliente primeiro.');
-//       return;
-//     }
-
-//     const url = `../view/recibo.php?id=${id}&cashflowok=${filterOk}`;
-//     showReceiptModal(url);
-//   });
-// }
-
-// function showReceiptModal(url) {
-//   const modal = document.getElementById('receiptModal');
-//   const frame = document.getElementById('receiptFrame');
-//   frame.src = url;
-//   modal.classList.remove('hidden');
-// }
-
-// // Fecha modal
-// document.addEventListener('DOMContentLoaded', () => {
-//   const close = document.getElementById('btnCloseModal');
-//   close?.addEventListener('click', () => {
-//     document.getElementById('receiptModal').classList.add('hidden');
-//     document.getElementById('receiptFrame').src = ''; // limpa
-//   });
-// });
-
-// document.addEventListener('DOMContentLoaded', function () {
-//   const btnPrintReceipt = document.getElementById('btnPrintReceipt');
-//   const receiptModal = document.getElementById('receiptModal');
-//   const receiptFrame = document.getElementById('receiptFrame');
-//   const btnCloseModal = document.getElementById('btnCloseModal');
-
-//   btnPrintReceipt.addEventListener('click', function () {
-//     // Carrega o recibo dentro do iframe
-//     receiptFrame.src = '../view/recibo.php';
-//     // Exibe o modal
-//     receiptModal.classList.remove('hidden');
-//   });
-
-//   btnCloseModal.addEventListener('click', function () {
-//     receiptModal.classList.add('hidden');
-//     receiptFrame.src = ''; // limpa ao fechar
-//   });
-// });
 
 document.getElementById('btnPrintReceipt').addEventListener('click', async () => {
   const id = document.getElementById('idcustomer').value;
@@ -844,7 +785,7 @@ document.getElementById('btnShowPhoto').addEventListener('click', function () {
         return;
     }
 
-    const photoPath = `../customer_pic/${fkId}.JPG`; // cuidado: verifique se o nome da pasta está mesmo "cutomer_pic"
+    const photoPath = `../customer_pic/${fkId}.JPG?t=${Date.now()}`; // cuidado: verifique se o nome da pasta está mesmo "cutomer_pic"
 
     document.getElementById('customerPhoto').src = photoPath;
     document.getElementById('photoModal').classList.remove('hidden');

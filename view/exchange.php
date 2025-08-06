@@ -88,6 +88,7 @@
                 <table border="0" class="table">
                     <thead>
                         <tr>
+                            <th>Edit</th>
                             <th>Value</th>
                             <th>Cents 1</th>
                             <th>%</th>
@@ -158,16 +159,83 @@
             <div class="modal-box">
                 <button class="close-btn" onclick="closePhotoModal()">×</button>
                 <div id="photoContent" style="text-align: center;">
-                    <img id="customerPhoto" src="" alt="Foto do Cliente" style="max-width: 100%; max-height: 400px; border-radius: 10px; box-shadow: 0 0 8px #ccc;">
+                    <img id="customerPhoto" src="" alt="Foto do Cliente"    
+                       style="width: auto; max-width: 100%; height: auto; max-height: 80vh; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;" />
                 </div>
                 <div style="text-align: center; margin-top: 15px;">
                     <input type="file" id="changePhotoInput" accept=".jpg,.jpeg" style="display: none;">
-                    <button onclick="document.getElementById('changePhotoInput').click()">Change Photo</button>
+                    <!-- <button onclick="document.getElementById('changePhotoInput').click()">Change Photo</button> -->
+                    <button id="btnOpenCamera">Capture Photo</button> <!-- 👈 Novo botão -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CAPTURA DE DOCUMENTOS -->
+        <div id="cameraModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <button class="close-btn" onclick="closeCameraModal()">×</button>
+
+                <div class="camera-container" style="text-align:center;">
+                    <video id="camera" autoplay playsinline width="400" style="width: 100%; max-width: 800px; height: auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;"></video>
+                    <canvas id="snapshot" style="display:none;"></canvas>
+                </div>
+
+                <div class="button-pair" style="margin-top: 15px; text-align:center;">
+                    <button type="button" onclick="tirarFotoPara('pessoal')">Photo</button>
+                    <!-- <button type="button" onclick="mostrarTodosImg('pessoal')">View</button> -->
                 </div>
             </div>
         </div>
 
         <script src="../js/exchange.js"></script>
+
+        <script src="../js/img.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+
+        <script>
+            // Verifica se é dispositivo mobile
+            function isMobileDevice() {
+                return /Mobi/i.test(window.navigator.userAgent);
+            }
+
+            // Abrir o modal da câmera
+            document.getElementById('btnOpenCamera').addEventListener('click', () => {
+                const modal = document.getElementById('cameraModal');
+                modal.classList.remove('hidden');
+
+                if (!isMobileDevice()) {
+                    const video = document.getElementById('camera');
+                    const canvas = document.getElementById('snapshot');
+
+                    window.video = video;
+                    window.canvas = canvas;
+
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then((stream) => {
+                            video.srcObject = stream;
+                        })
+                        .catch((err) => {
+                            alert('Erro ao acessar a câmera: ' + err.message);
+                        });
+                }
+            });
+
+            function closeCameraModal() {
+                const modal = document.getElementById('cameraModal');
+                modal.classList.add('hidden');
+
+                // Encerra a câmera
+                const video = document.getElementById('camera');
+                const stream = video.srcObject;
+                if (stream) {
+                    const tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                    video.srcObject = null;
+                }
+            }
+        </script>
+
         <script>
             function printReceipt() {
                 const receiptElement = document.getElementById('receiptContent');
