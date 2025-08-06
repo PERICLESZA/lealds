@@ -175,7 +175,7 @@ function fetchCashflowData(idcustomer,cashflowok) {
 }
 
 function updateCashflowTable(data) {
-  // console.log(data);
+   console.log(data);
 
   const tbody = document.getElementById('customer_data');
 
@@ -216,6 +216,9 @@ function createCashflowRow(row, index, data) {
   const dtcashflow = row.dtcashflow ?? '';
   const tchaflow = row.tchaflow ?? '';
 
+  const description =     row.description ?? '';
+  const fk_idstatus =     row.fk_idstatus ?? '';
+
   const trHtml = `
     <!-- Campos ocultos com name para envio -->
     <input type="hidden" name="idcashflow" value="${row.idcashflow}">
@@ -231,9 +234,13 @@ function createCashflowRow(row, index, data) {
     <input type="hidden" name="totaltopay" value="${totaltopay.toFixed(2)}">
     <input type="hidden" name="valuewire" value="${wireValue.toFixed(2)}">
     <input type="hidden" name="wire" value="${wire}">
+    <input type="hidden" name="description" value="${description}">
+    <input type="hidden" name="fk_idstatus" value="${fk_idstatus}">
 
     <!-- Colunas visuais -->
-    <td>✏️</td>
+    <td class="action-icons">
+      <button class="edit-btn" type="button">✏️</button>
+    </td>
     <td>${valueflow}</td>
     <td>${centsflow}</td>
     <td>${percentflow}</td>
@@ -257,6 +264,16 @@ function createCashflowRow(row, index, data) {
   `;
 
   tr.innerHTML = trHtml;
+
+  // 🎯 ADICIONA EVENTO AO BOTÃO DE EDIÇÃO
+  const editBtn = tr.querySelector('.edit-btn');
+  editBtn.onclick = () => {
+    openEditCashflowModal({
+      id: row.idcashflow,
+      description: row.description,
+      fk_idstatus: row.fk_idstatus
+    });
+  };
 
   // Eventos
   addWireCheckboxHandler(tr, row);

@@ -117,7 +117,7 @@ function getCashflowByCustomer($conn)
     $sql = "SELECT idcashflow, valueflow, centsflow, percentflow, 
                    valuepercentflow, subtotalflow, cents2flow, 
                    wire, cashflowok, dtcashflow, tchaflow,
-                   totalflow, totaltopay, valuewire
+                   totalflow, totaltopay, valuewire, description, fk_idstatus
             FROM cashflow
             WHERE fk_idcustomer = :id AND excluido = 0";
 
@@ -221,9 +221,9 @@ function insertCashflow(PDO $conn, array $data): bool
         (
             valueflow, centsflow, valuepercentflow, cents2flow, 
             percentflow, totalflow, totaltopay, dtcashflow, tchaflow, subtotalflow,
-            fk_idcustomer, fk_idbankmaster, valuewire
+            fk_idcustomer, fk_idbankmaster, valuewire, description, fk_idstatus
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     // echo "<pre>";
@@ -248,7 +248,9 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['subtotalflow'],
         $data['fk_idcustomer'],
         $data['fk_idbankmaster'],
-        $data['valuewire']
+        $data['valuewire'],
+        $data['description'],
+        $data['fk_idstatus']
     ]);
 }
 
@@ -304,7 +306,9 @@ function saveExchange($conn)
         tchaflow = :tchaflow,
         totalflow = :totalflow,
         totaltopay = :totaltopay,
-        valuewire = :valuewire
+        valuewire = :valuewire,
+        description = :description,
+        fk_idstatus = :fk_idstatus
       WHERE idcashflow = :idcashflow
     ";
 
@@ -323,6 +327,8 @@ function saveExchange($conn)
         $stmt->bindValue(':totalflow', $data['totalflow']);
         $stmt->bindValue(':totaltopay', $data['totaltopay']);
         $stmt->bindValue(':valuewire', $data['valuewire']);
+        $stmt->bindValue(':description', $data['description']);
+        $stmt->bindValue(':fk_idstatus', $data['fk_idstatus']);
         $stmt->bindValue(':idcashflow', $data['idcashflow']);
 
         $stmt->execute();

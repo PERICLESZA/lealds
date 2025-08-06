@@ -12,12 +12,12 @@ function fetchSelects() {
 }
 
 function fetchStatus() {
-    fetch('../controller/classcustomercontroller.php?action=list')
+    fetch('../controller/statusController.php?action=list')
         .then(res => res.json())
         .then(status => {
             const selectStatus = document.getElementById('fk_idstatus');
             selectStatus.innerHTML = '<option value="">Check Status</option>';
-            classcustomers.forEach(status => {
+            status.forEach(status => {
                 const option = document.createElement('option');
                 option.value = status.idstatus;
                 option.textContent = status.description;

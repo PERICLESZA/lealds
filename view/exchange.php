@@ -19,7 +19,8 @@
         <div class="cad-group top">
             <div class="input-container">
                 <label for="searchInput">Phone No/name:</label>
-                <input type="text" id="searchInput" tabindex="-1" autocomplete="off" /> <input type="hidden" id="idcustomer" name="idcustomer" />
+                <input type="text" id="searchInput" tabindex="-1" autocomplete="off" /> <input type="hidden"
+                    id="idcustomer" name="idcustomer" />
                 <ul id="autocompleteList" class="autocomplete-ul"></ul>
                 <span id="selectedCustomerName" style="display: none;"></span>
 
@@ -159,8 +160,8 @@
             <div class="modal-box">
                 <button class="close-btn" onclick="closePhotoModal()">×</button>
                 <div id="photoContent" style="text-align: center;">
-                    <img id="customerPhoto" src="" alt="Foto do Cliente"    
-                       style="width: auto; max-width: 100%; height: auto; max-height: 80vh; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;" />
+                    <img id="customerPhoto" src="" alt="Foto do Cliente"
+                        style="width: auto; max-width: 100%; height: auto; max-height: 80vh; display: block; margin: 0 auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;" />
                 </div>
                 <div style="text-align: center; margin-top: 15px;">
                     <input type="file" id="changePhotoInput" accept=".jpg,.jpeg" style="display: none;">
@@ -176,7 +177,8 @@
                 <button class="close-btn" onclick="closeCameraModal()">×</button>
 
                 <div class="camera-container" style="text-align:center;">
-                    <video id="camera" autoplay playsinline width="400" style="width: 100%; max-width: 800px; height: auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;"></video>
+                    <video id="camera" autoplay playsinline width="400"
+                        style="width: 100%; max-width: 800px; height: auto; border-radius: 10px; box-shadow: 0 0 8px #ccc;"></video>
                     <canvas id="snapshot" style="display:none;"></canvas>
                 </div>
 
@@ -248,7 +250,7 @@
                 const screenWidth = screen.availWidth;
                 const screenHeight = screen.availHeight;
 
-                const printWindow = window.open('','',
+                const printWindow = window.open('', '',
                     `width=${screenWidth},height=${screenHeight},left=0,top=0,scrollbars=yes`
                 );
                 const receiptHTML = receiptElement.innerHTML;
@@ -327,6 +329,69 @@
                     printWindow.print();
                     setTimeout(() => printWindow.close(), 500);
                 };
+            }
+        </script>
+
+        <!-- MODAL DE EDIÇÃO DE CASHFLOW -->
+        <div id="editCashflowModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <button class="close-btn" onclick="closeEditCashflowModal()">×</button>
+                <div class="form-container">
+                    <h2>Editar Cashflow</h2>
+                    <div class="cad-group">
+                        <div class="input-container">
+                            <label for="edit_fk_idstatus">Status</label>
+                            <select id="edit_fk_idstatus"></select>
+                        </div>
+                    </div>
+                    <div class="cad-group">
+                        <div class="input-container full-width">
+                            <label for="edit_description">Obs</label>
+                            <input type="text" id="edit_description" placeholder="Description">
+                        </div>
+                    </div>
+                    <input type="hidden" id="edit_idcashflow">
+                    <div class="button-group">
+                        <button onclick="updateCashflow()">Salvar Alterações</button>
+                        <button onclick="closeEditCashflowModal()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openEditCashflowModal(cashflowData) {
+
+                console.log('Dados recebidos para edição:', cashflowData); // 👈
+
+                document.getElementById('edit_idcashflow').value = cashflowData.id;
+                document.getElementById('edit_description').value = cashflowData.description;
+                document.getElementById('edit_fk_idstatus').value = cashflowData.fk_idstatus;
+
+                document.getElementById('editCashflowModal').classList.remove('hidden');
+            }
+
+            function closeEditCashflowModal() {
+                document.getElementById('editCashflowModal').classList.add('hidden');
+            }
+
+            function updateCashflow() {
+                const idEl = document.getElementById('edit_idcashflow');
+                const descriptionEl = document.getElementById('edit_description');
+                const statusEl = document.getElementById('edit_fk_idstatus');
+
+                if (!idEl || !descriptionEl || !statusEl) {
+                    console.error('Um ou mais elementos não foram encontrados.');
+                    return;
+                }
+
+                const id = idEl.value;
+                const description = descriptionEl.value;
+                const fk_idstatus = statusEl.value;
+
+                console.log('Atualizando cashflow:', { id, description, fk_idstatus });
+
+                closeEditCashflowModal();
             }
         </script>
 
