@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     // fetchSelects();
     fetchStatus(); // preenche a lista de status do check
-    document.getElementById("backButton").addEventListener("click", function () {
-        window.location.href = "../view/menuprincipal.php";
-    });
+    // document.getElementById("backButton").addEventListener("click", function () {
+    //     window.location.href = "../view/menuprincipal.php";
+    // });
 });
 
 function fetchSelects() {

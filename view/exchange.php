@@ -190,6 +190,7 @@
         </div>
 
         <script src="../js/exchange.js"></script>
+        <script src="../js/check.js"></script>
 
         <script src="../js/img.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
@@ -337,23 +338,23 @@
             <div class="modal-box">
                 <button class="close-btn" onclick="closeEditCashflowModal()">×</button>
                 <div class="form-container">
-                    <h2>Editar Cashflow</h2>
+                    <h2>Edit Check</h2>
                     <div class="cad-group">
                         <div class="input-container">
-                            <label for="edit_fk_idstatus">Status</label>
-                            <select id="edit_fk_idstatus"></select>
+                            <label for="fk_idstatus">Status</label>
+                            <select id="fk_idstatus" name="fk_idstatus"></select>
                         </div>
                     </div>
                     <div class="cad-group">
                         <div class="input-container full-width">
-                            <label for="edit_description">Obs</label>
-                            <input type="text" id="edit_description" placeholder="Description">
+                            <label for="description">Obs</label>
+                            <input type="text" id="description" name="description" placeholder="Description">
                         </div>
                     </div>
-                    <input type="hidden" id="edit_idcashflow">
+                    <input type="hidden" id="idcashflow" name="idcashflow">
                     <div class="button-group">
-                        <button onclick="updateCashflow()">Salvar Alterações</button>
-                        <button onclick="closeEditCashflowModal()">Cancelar</button>
+                        <button onclick="updateCashflow()">Update</button>
+                        <button onclick="closeEditCashflowModal()">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -364,9 +365,9 @@
 
                 console.log('Dados recebidos para edição:', cashflowData); // 👈
 
-                document.getElementById('edit_idcashflow').value = cashflowData.id;
-                document.getElementById('edit_description').value = cashflowData.description;
-                document.getElementById('edit_fk_idstatus').value = cashflowData.fk_idstatus;
+                document.getElementById('idcashflow').value = cashflowData.id;
+                document.getElementById('description').value = cashflowData.description;
+                document.getElementById('fk_idstatus').value = cashflowData.fk_idstatus;
 
                 document.getElementById('editCashflowModal').classList.remove('hidden');
             }
@@ -376,23 +377,17 @@
             }
 
             function updateCashflow() {
-                const idEl = document.getElementById('edit_idcashflow');
-                const descriptionEl = document.getElementById('edit_description');
-                const statusEl = document.getElementById('edit_fk_idstatus');
+                const modal = document.getElementById('editCashflowModal');
 
-                if (!idEl || !descriptionEl || !statusEl) {
-                    console.error('Um ou mais elementos não foram encontrados.');
+                if (!modal) {
+                    console.error('Modal de edição não encontrado.');
                     return;
                 }
 
-                const id = idEl.value;
-                const description = descriptionEl.value;
-                const fk_idstatus = statusEl.value;
-
-                console.log('Atualizando cashflow:', { id, description, fk_idstatus });
-
+                saveExchangeRow(modal);
                 closeEditCashflowModal();
             }
+
         </script>
 
 </body>

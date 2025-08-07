@@ -92,7 +92,7 @@ function fimAtend() {
   // 1. Verifica se a janela mãe existe e se foi aberta a partir de coletor.php
   if (!(window.opener && !window.opener.closed && window.opener.location.href.includes('coletor.php'))) {
     // Se não foi aberta por coletor.php, apenas sai da função
-    window.close();
+    // window.close();
     return;
   }
 

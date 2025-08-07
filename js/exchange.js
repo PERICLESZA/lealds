@@ -18,7 +18,7 @@ async function loadWireValue() {
     const response = await fetch('../controller/exchangeController.php?action=wire_value');
     const result = await response.json();
     wireValue = parseFloat(result.value);
-    console.log('Wire value carregado:', wireValue);
+    // console.log('Wire value carregado:', wireValue);
   } catch (error) {
     console.error('Erro ao carregar wire value:', error);
     wireValue = 0;
@@ -175,7 +175,7 @@ function fetchCashflowData(idcustomer,cashflowok) {
 }
 
 function updateCashflowTable(data) {
-   console.log(data);
+  //  console.log(data);
 
   const tbody = document.getElementById('customer_data');
 
@@ -793,10 +793,10 @@ function printReceipt() {
 
 // modal todo do customer
 document.getElementById('btnShowPhoto').addEventListener('click', function () {
-  console.log('fk_idcustomer:', document.getElementById('idcustomer').value);
+  // console.log('fk_idcustomer:', document.getElementById('idcustomer').value);
 
     const fkId = document.getElementById('idcustomer').value;
-    console.log(fkId);
+    // console.log(fkId);
     if (!fkId) {
         alert('Selecione um cliente primeiro.');
         return;

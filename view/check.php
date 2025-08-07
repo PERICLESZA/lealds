@@ -32,7 +32,7 @@
             </div>
             <div class="cad-group">
                 <div class="input-container">
-                    <label for="fk_idclasscustomer">Status</label>
+                    <label for="fk_idstatus">Status</label>
                     <select id="fk_idstatus"></select>
                 </div>
                 <div class="input-container full-width">
