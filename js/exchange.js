@@ -282,32 +282,6 @@ function createCashflowRow(row, index, data) {
   return tr;
 }
 
-// function addWireCheckboxHandler(tr, data, index) {
-//   tr.querySelector('.wire-check').addEventListener('change', function () {
-//     let totalflowFinal = 0;
-//     let totaltopayFinal = 0;
-
-//     const allRows = document.querySelectorAll('#customer_data tr');
-//     allRows.forEach((rowEl, i) => {
-//       const isChecked = rowEl.querySelector('.wire-check').checked;
-//       const rowData = data[i];
-//       const tf = parseFloat(rowData.totalflow) || 0;
-//       const tp = parseFloat(rowData.totaltopay) || 0;
-
-//       if (isChecked) {
-//         totalflowFinal += tf + wireValue;
-//         totaltopayFinal += tp - wireValue;
-//       } else {
-//         totalflowFinal += tf;
-//         totaltopayFinal += tp;
-//       }
-//     });
-
-//     document.getElementById('totalflow').value = totalflowFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-//     document.getElementById('totaltopay').value = totaltopayFinal.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-//   });
-// }
-
 function addWireCheckboxHandler(tr, rowData) {
   const checkbox = tr.querySelector('.wire-check');
   const flowCell = tr.querySelector('.totalflow');
@@ -400,7 +374,8 @@ async function insertCashflow(calculated) {
     tchaflow,
     fk_idcustomer,
     fk_idbankmaster,
-    subtotalflow
+    subtotalflow, 
+    description
   });
 
   formData.append('valuewire', wireValue); // ✅ aqui
@@ -810,4 +785,173 @@ document.getElementById('btnShowPhoto').addEventListener('click', function () {
 
 function closePhotoModal() {
     document.getElementById('photoModal').classList.add('hidden');
+}
+
+function refreshCashflowTable() {
+  const idCustomer = document.getElementById('idcustomer').value;
+  const cashflowok = document.getElementById('filterOk').value;
+
+  console.log('refresh idcustomer', idCustomer, cashflowok)
+
+  if (!idCustomer) {
+    console.warn('Cliente não selecionado!');
+    return;
+  }
+
+  fetch(`../controller/exchangeController.php?action=cashflow&id=${idCustomer}&cashflowok=${cashflowok}&_=${new Date().getTime()}`)
+    .then(res => res.json())
+    .then(data => {
+      //  console.log('Dados recebidos do backend:', data);
+      const tbody = document.getElementById('customer_data');
+      tbody.innerHTML = ''; // limpa a tabela
+
+      data.forEach((row, index) => {
+        const tr = createCashflowRow(row, index, data);
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(err => console.error('Erro ao atualizar tabela:', err));
+}
+
+//modal de edição do check ou registro da tabela cashflow
+function openEditCashflowModal(cashflowData) {
+
+    // console.log('Dados recebidos para edição:', cashflowData); // 👈
+
+    document.getElementById('idcashflow').value = cashflowData.id;
+    document.getElementById('description').value = cashflowData.description;
+    document.getElementById('fk_idstatus').value = cashflowData.fk_idstatus;
+
+    document.getElementById('editCashflowModal').classList.remove('hidden');
+}
+
+function closeEditCashflowModal() {
+    document.getElementById('editCashflowModal').classList.add('hidden');
+}
+
+function updateCashflowPartial() {
+    const idcashflow = document.getElementById('idcashflow').value;
+    const fk_idstatus = document.getElementById('fk_idstatus').value;
+    const description = document.getElementById('description').value;
+
+    fetch('../controller/exchangeController.php?action=update_partial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idcashflow, fk_idstatus, description })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                alert('Atualizado com sucesso!');
+                // Recarregue a tabela ou atualize UI aqui
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        })
+        .catch(err => {
+            alert('Erro na requisição: ' + err.message);
+        });
+    refreshCashflowTable();
+    closeEditCashflowModal();
+}
+
+// modal NewCustomer
+document.getElementById('btnNewCustomer').addEventListener('click', function () {
+    document.getElementById('newCustomerModal').classList.remove('hidden');
+});
+
+function insertNewCustomer() {
+    const name = document.getElementById('nname').value.trim();
+    const phone = document.getElementById('nphone').value.trim();
+
+    console.log("Dados digitados:", name, phone);
+
+    if (!name || !phone) {
+        alert("Please fill in Name and Phone.");
+        return;
+    }
+
+    fetch('../controller/exchangeController.php?action=insertNCustomer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`
+    })
+    .then(async response => {
+        console.log("Status HTTP:", response.status);
+        const text = await response.text();
+        console.log("Resposta bruta do servidor:", text);
+
+        try {
+            const data = JSON.parse(text);
+            if (data.success) {
+                alert(data.message || "Customer added successfully!");
+                document.getElementById("nname").value = "";
+                document.getElementById("nphone").value = "";
+            } else {
+                alert("Erro: " + (data.message || "Unknown error"));
+            }
+        } catch (e) {
+            console.error("Resposta não é JSON válido:", e);
+            alert("Erro no servidor: " + text); // mostra resposta crua no alert
+        }
+    })
+    .catch(err => {
+        console.error("Erro na requisição:", err);
+        alert("Falha na conexão com o servidor.");
+    });
+}
+
+function insertNewCompany() {
+    const name = document.getElementById('cname').value.trim();
+    const phone = document.getElementById('cphone').value.trim();
+
+    console.log("Dados digitados:", name, phone);
+
+    if (!name || !phone) {
+        alert("Please fill in Name and Phone.");
+        return;
+    }
+
+    fetch('../controller/exchangeController.php?action=insertNCompany', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}`
+    })
+    .then(async response => {
+        console.log("Status HTTP:", response.status);
+        const text = await response.text();
+        console.log("Resposta bruta do servidor:", text);
+
+        try {
+            const data = JSON.parse(text);
+            if (data.success) {
+                alert(data.message || "Company added successfully!");
+                document.getElementById("cname").value = "";
+                document.getElementById("cphone").value = "";
+            } else {
+                alert("Erro: " + (data.message || "Unknown error"));
+            }
+        } catch (e) {
+            console.error("Resposta não é JSON válido:", e);
+            alert("Erro no servidor: " + text); // mostra resposta crua no alert
+        }
+    })
+    .catch(err => {
+        console.error("Erro na requisição:", err);
+        alert("Falha na conexão com o servidor.");
+    });
+}
+
+
+function closeNewCustomer() {
+    document.getElementById('newCustomerModal').classList.add('hidden');
+}
+
+// modal NewCustomer
+document.getElementById('btnNewCompany').addEventListener('click', function () {
+    document.getElementById('newCompanyModal').classList.remove('hidden');
+});
+
+function closeNewCompany() {
+    document.getElementById('newCompanyModal').classList.add('hidden');
 }

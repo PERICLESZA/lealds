@@ -27,3 +27,46 @@ function fetchStatus() {
         .catch(error => console.error('Error when fetching status', error)
     );
 }
+
+//modal captura de imagens
+
+// Verifica se é dispositivo mobile
+function isMobileDevice() {
+    return /Mobi/i.test(window.navigator.userAgent);
+}
+
+// Abrir o modal da câmera
+document.getElementById('btnOpenCamera').addEventListener('click', () => {
+    const modal = document.getElementById('cameraModal');
+    modal.classList.remove('hidden');
+
+    if (!isMobileDevice()) {
+        const video = document.getElementById('camera');
+        const canvas = document.getElementById('snapshot');
+
+        window.video = video;
+        window.canvas = canvas;
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                alert('Erro ao acessar a câmera: ' + err.message);
+            });
+    }
+});
+
+function closeCameraModal() {
+    const modal = document.getElementById('cameraModal');
+    modal.classList.add('hidden');
+
+    // Encerra a câmera
+    const video = document.getElementById('camera');
+    const stream = video.srcObject;
+    if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+        video.srcObject = null;
+    }
+}

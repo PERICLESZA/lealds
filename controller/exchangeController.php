@@ -10,7 +10,8 @@ $conn->exec("SET time_zone = '-03:00'"); // <- AGORA SIM NA CONEXÃO CERTA
 $verifica = $conn->query("SELECT NOW() AS agora")->fetch();
 // file_put_contents('log_cashflow.txt', "NOW MySQL: {$verifica['agora']}" . PHP_EOL, FILE_APPEND);
 
-
+// $input = json_decode(file_get_contents('php://input'), true);
+// $action = $input['action'] ?? ($_POST['action'] ?? '');
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 switch ($action) {
@@ -40,15 +41,24 @@ switch ($action) {
         $result = calculateCashflowValues($conn, $value, $percent);
         // header('Content-Type: application/json');
         echo json_encode($result);
-        exit;
+        break;
     case 'delete':
         $idcashflow = $_GET['id'] ?? 0;
         $result = deleteCashflowById($conn, $idcashflow);
         echo json_encode($result);
-        exit;
+        break;
+    case 'update_partial':
+        updateCashflowPartial($conn);
+        break;
     case 'saveexchange':
         saveExchange($conn);
-        exit;
+        break;
+    case 'insertNCustomer':
+        insertNewCustomer($conn);
+        break;
+    case 'insertNCompany':
+        insertNewCompany($conn);
+        break;
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
@@ -170,7 +180,6 @@ function calculateCashflowValues($conn, float $value, float $percent): array
 
     // $subtotalflow = $value_base - $valuepercentflow;
 
-
     if ($value <= 200) {
         $valuepercentflow = 3;
         $percent = 2;
@@ -179,9 +188,6 @@ function calculateCashflowValues($conn, float $value, float $percent): array
         $valuepercentflow = ($percent == 0) ? 3 : $valuepercentflow;
         $valuepercentflow = number_format($valuepercentflow, 2);
     }
-
-    // $totalflow = $value - ($centsflow - $valuepercentflow);
-    // $totaltopay = $value - $totalflow;
 
     $subtotalflow = number_format($value - ($centsflow + $valuepercentflow), 2); // 2.36 - 0.36 - 0.04 = 1.96
 
@@ -207,14 +213,11 @@ function calculateCashflowValues($conn, float $value, float $percent): array
 // 💾 Insere os dados calculados no banco de dados
 function insertCashflow(PDO $conn, array $data): bool
 {
-    // file_put_contents('log_cashflow.txt', "insertCashflow chamada em " . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
     // Usa fuso horário explicitamente
     $dt = new DateTime('now', new DateTimeZone('America/Sao_Paulo'));
     $dataAtual = $data['dtcashflow'] ?? $dt->format('Y-m-d'); // fallback se não vier nada
     $horaAtual = $dt->format('H:i:s');
-
-    // echo "Data gerada: $dataAtual<br>Hora gerada: $horaAtual";
-    // exit;
+    $fk_idstatus = !empty($data['fk_idstatus']) ? $data['fk_idstatus'] : 1;
 
     $stmt = $conn->prepare("
         INSERT INTO cashflow 
@@ -225,15 +228,6 @@ function insertCashflow(PDO $conn, array $data): bool
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
-
-    // echo "<pre>";
-    // print_r([
-    //     'dataAtual' => $dataAtual,
-    //     'horaAtual' => $horaAtual,
-    //     'datetime PHP' => $dt->format('Y-m-d H:i:s')
-    // ]);
-    // echo "</pre>";
-    // exit;
 
     return $stmt->execute([
         $data['valueflow'],
@@ -250,7 +244,7 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['fk_idbankmaster'],
         $data['valuewire'],
         $data['description'],
-        $data['fk_idstatus']
+        $fk_idstatus
     ]);
 }
 
@@ -270,6 +264,7 @@ function handleInsertCashflow(PDO $conn): void
     $cashflowData['fk_idcustomer'] = $_POST['fk_idcustomer'] ?? null;
     $cashflowData['fk_idbankmaster'] = $_POST['fk_idbankmaster'] ?? null;
     $cashflowData['valuewire'] = isset($_POST['valuewire']) ? floatval($_POST['valuewire']) : 0;
+    $cashflowData['description'] = $_POST['description'] ?? null;
 
     $success = insertCashflow($conn, $cashflowData);
 
@@ -336,5 +331,87 @@ function saveExchange($conn)
         echo json_encode(['success' => true]);
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
+function updateCashflowPartial($conn)
+{
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    if (!$data || !isset($data['idcashflow'], $data['fk_idstatus'], $data['description'])) {
+        echo json_encode(['success' => false, 'message' => 'Dados incompletos']);
+        return;
+    }
+
+    try {
+        $sql = "UPDATE cashflow SET
+                    fk_idstatus = :fk_idstatus,
+                    description = :description
+                WHERE idcashflow = :idcashflow";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':fk_idstatus', $data['fk_idstatus']);
+        $stmt->bindValue(':description', $data['description']);
+        $stmt->bindValue(':idcashflow', $data['idcashflow']);
+        $stmt->execute();
+
+        echo json_encode(['success' => true]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+    }
+}
+
+function insertNewCustomer($conn)
+{
+    header('Content-Type: application/json'); // força retorno como JSON
+
+    $name = $_POST['name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+
+    if ($name === '' || $phone === '') {
+        echo json_encode(['success' => false, 'message' => 'Name and phone are required']);
+        return;
+    }
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO customer (name, phone, fk_idclasscustomer) VALUES (:name, :phone, 1)");
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":phone", $phone);
+
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true, "message" => "Customer ok"]);
+        } else {
+            echo json_encode(["success" => false, "message" => "Customer error"]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
+    }
+}
+
+function insertNewCompany($conn)
+{
+
+    header('Content-Type: application/json'); // força retorno como JSON
+
+    $name = $_POST['name'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+
+    if ($name === '' || $phone === '') {
+        echo json_encode(['success' => false, 'message' => 'Name and phone are required']);
+        return;
+    }
+
+    try {
+        $stmt = $conn->prepare("INSERT INTO customer (name, phone, fk_idclasscustomer) VALUES (:name, :phone, 10)");
+        $stmt->bindParam(":name", $name);
+        $stmt->bindParam(":phone", $phone);
+
+        if ($stmt->execute()) {
+            echo json_encode(["success" => true, "message" => "Company ok"]);
+        } else {
+            echo json_encode(["success" => false, "message" => "Company error"]);
+        }
+    } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => $e->getMessage()]);
     }
 }
