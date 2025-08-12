@@ -118,7 +118,8 @@ function getCashflowByCustomer($conn)
 
     $id = $_GET['id'] ?? null;
     $filterOk = $_GET['cashflowok'] ?? null;
-
+    error_log(' como ficou cashflowok recebido: ' . $filterOk);
+    
     if (!$id) {
         echo json_encode(["error" => "ID não informado"]);
         return;

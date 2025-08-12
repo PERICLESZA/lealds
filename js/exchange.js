@@ -199,6 +199,7 @@ function updateCashflowTable(data) {
 }
 
 function createCashflowRow(row, index, data) {
+  // console.log("createCashFlow: ", index, data)
   const tr = document.createElement('tr');
   tr.dataset.idcashflow = row.idcashflow;
 
@@ -331,8 +332,9 @@ function deleteCashflowEntry(idcashflow) {
     .then(result => {
       if (result.success) {
         alert("Excluído com sucesso!");
-        const idCustomer = document.getElementById('idcustomer').value;
-        fetchCashflowData(idCustomer).then(updateCashflowTable);
+        const idCustomer = document.getElementById('idcustomer')?.value ?? 0;
+        const cashflowok = document.getElementById('filterOk')?.value ?? 0;
+        fetchCashflowData(idCustomer, cashflowok).then(updateCashflowTable);
       } else {
         alert('Erro: ' + result.error);
       }
@@ -354,6 +356,7 @@ function clearCashflowTable() {
 async function insertCashflow(calculated) {
   const value = calculated.valueflow;
   const dtcashflow = document.getElementById('dtcashflow').value;
+  const cashflowok = document.getElementById('filterOk')?.value ?? 0;
   const fk_idcustomer = document.getElementById('idcustomer').value;
   const fk_idbankmaster = document.getElementById('fk_idbankmaster').value;
   const tchaflow = document.getElementById('tchaflow').value;
@@ -389,7 +392,7 @@ async function insertCashflow(calculated) {
       if (result.success) {
         valueInput.value = '';
         valueInput.focus();
-        fetchCashflowData(fk_idcustomer).then(updateCashflowTable);
+        fetchCashflowData(fk_idcustomer, cashflowok).then(updateCashflowTable);
       } else {
         alert('Não foi possível inserir.');
       }
@@ -436,7 +439,8 @@ function enableInsertOnEnter() {
   
           // console.log('Campo totalflow agora vale:', tfElem.value);
           // console.log('Campo totaltopay agora vale:', tpElem.value);
-  
+          // console.log('Result:', result);
+   
           insertCashflow(result); // 👈 certifique-se que essa função não zera os campos também
         });
     }
@@ -788,8 +792,8 @@ function closePhotoModal() {
 }
 
 function refreshCashflowTable() {
-  const idCustomer = document.getElementById('idcustomer').value;
-  const cashflowok = document.getElementById('filterOk').value;
+  const idCustomer = document.getElementById('idcustomer')?.value ?? 0;
+  const cashflowok = document.getElementById('filterOk')?.value ?? 0;
 
   console.log('refresh idcustomer', idCustomer, cashflowok)
 
