@@ -361,6 +361,7 @@ async function insertCashflow(calculated) {
   const fk_idbankmaster = document.getElementById('fk_idbankmaster').value;
   const tchaflow = document.getElementById('tchaflow').value;
   const subtotalflow = calculated.subtotalflow;
+  const description = "";
 
   const backendResult = await calcularTotaisNoBackend(value);
   if (!backendResult) return;
@@ -820,7 +821,7 @@ function refreshCashflowTable() {
 //modal de edição do check ou registro da tabela cashflow
 function openEditCashflowModal(cashflowData) {
 
-    // console.log('Dados recebidos para edição:', cashflowData); // 👈
+    console.log('Dados recebidos para edição:', cashflowData); // 👈
 
     document.getElementById('idcashflow').value = cashflowData.id;
     document.getElementById('description').value = cashflowData.description;

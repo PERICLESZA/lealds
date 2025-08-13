@@ -344,6 +344,11 @@ function updateCashflowPartial($conn)
         return;
     }
 
+    // Se vier a string literal "[object HTMLInputElement]", define como null
+    if (trim($data['description']) === '[object HTMLInputElement]') {
+        $data['description'] = null;
+    }
+
     try {
         $sql = "UPDATE cashflow SET
                     fk_idstatus = :fk_idstatus,
