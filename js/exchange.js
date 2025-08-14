@@ -200,7 +200,14 @@ function updateCashflowTable(data) {
 
 function createCashflowRow(row, index, data) {
   // console.log("createCashFlow: ", index, data)
+  
   const tr = document.createElement('tr');
+
+   // aplica cor vermelha se status for 4 ou 5
+  if (row.fk_idstatus == 4 || row.fk_idstatus == 5) {
+    tr.style.color = 'red';
+  }
+
   tr.dataset.idcashflow = row.idcashflow;
 
   const valueflow = Number(row.valueflow).toFixed(2);
