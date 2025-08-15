@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Redireciona para o Menu Principal
-    document.getElementById("backButton").addEventListener("click", function () {
-        window.location.href = "../view/menuprincipal.php";
-    });
 
     let editingIdentificationId = null;
 

@@ -29,16 +29,17 @@ $nmstore = isset($_SESSION['nmstore']) ? $_SESSION['nmstore'] : 'Nenhuma loja se
             <h2>Menu</h2>
             <ul>
                 <?php if ($show_buttons): ?>
-                    <li><a href="ds.php">Visão Geral</a></li>
-                    <li><a href="dsmonth.php">Visão Mensal</a></li>
+                    <li><a href="ds.php" target="conteudo">Visão Geral</a></li>
+                    <li><a href="dsmonth.php" target="conteudo">Visão Mensal</a></li>
                 <?php endif; ?>
-                <li><a href="city.php">City</a></li>
-                <li><a href="bank.php">Bank</a></li>
-                <li><a href="identification.php">Identification</a></li>
-                <li><a href="classcustomer.php">Class Customer</a></li>
-                <li><a href="user.php">User</a></li>
-                <li><a href="customer.php">Customer</a></li>
-                <li><a href="pessoa.php">Pessoa</a></li>
+                <li><a href="exchange.php" target="conteudo">Exchange</a></li>
+                <li><a href="bank.php" target="conteudo">Bank</a></li>
+                <li><a href="city.php" target="conteudo">City</a></li>
+                <li><a href="classcustomer.php" target="conteudo">Class Customer</a></li>
+                <li><a href="customer.php" target="conteudo">Customer</a></li>
+                <li><a href="identification.php" target="conteudo">Identification</a></li>
+                <li><a href="user.php" target="conteudo">User</a></li>
+                <li><a href="rpexchange.php" target="conteudo">Report</a></li>
                 <br><br>
                 <a href="../controller/logout.php">Logout</a>
             </ul>
@@ -48,10 +49,14 @@ $nmstore = isset($_SESSION['nmstore']) ? $_SESSION['nmstore'] : 'Nenhuma loja se
                 <p><?php echo htmlspecialchars($nmstore); ?></p>
             </div>
         </div>
-        <div class="content">
+        <!-- <div class="content">
             <h1>Welcome to the Luna Travel analytics!</h1>
             <p>Use the menu on the side to navigate through the features.</p>
+        </div> -->
+        <div class="content">
+            <iframe src="exchange.php" name="conteudo" allowtransparency="true"></iframe>
         </div>
+
     </div>
 </body>
 

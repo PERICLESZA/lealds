@@ -56,13 +56,13 @@ foreach ($monthly_totals as $db_name => $monthly_data) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Totais Mensais</title>
+    <title>Monthly Financial</title>
     <link rel="stylesheet" href="../css/ds.css">
 </head>
 
 <body>
     <div class="dashboard-container">
-        <h1>Fluxo Mensal</h1>
+        <h1>Monthly Financial</h1>
 
         <div class="form-container">
             <label for="start_date">Data de Início:</label>
@@ -75,7 +75,6 @@ foreach ($monthly_totals as $db_name => $monthly_data) {
             <div class="button-group">
                 <button id="fetchButton">Recalcular</button>
                 <!-- <button id="recalcularButton" onclick="fetchData()">Recalcular</button> -->
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
 
         </div>

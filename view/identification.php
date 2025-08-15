@@ -26,15 +26,14 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>Gerenciamento de Identificações</h1>
+        <h2>Identification</h2>
 
         <div class="form-container">
-            <label for="identification_name">Nome da Identificação:</label>
+            <label for="identification_name">Identification:</label>
             <input type="text" id="identification_name" placeholder="Digite o nome da identificação">
             <!-- Container com os botões lado a lado -->
             <div class="button-group">
                 <button id="saveIdentificationBtn" onclick="saveIdentification()">Adicionar Identificação</button>
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
         </div>
 

@@ -4,9 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchClassCustomers(); // preenche a lista de classe do customer
     fetchIdentifications(); // preenche a lista de identifications
     fetchCompanies(); // preenche a lista de companias 
-    document.getElementById("backButton").addEventListener("click", function () {
-        window.location.href = "../view/menuprincipal.php";
-    });
 });
 
 let editingCustomerId = null;

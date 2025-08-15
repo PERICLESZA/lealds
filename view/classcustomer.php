@@ -13,7 +13,7 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>Gerenciamento de Classes de Clientes</h1>
+        <h2>Customer Class</h2>
 
         <div class="form-container">
 
@@ -35,7 +35,6 @@
 
             <div class="button-group">
                 <button id="saveBtn" onclick="saveClassCustomer()">Adicionar Classe</button>
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
 
         </div>

@@ -13,14 +13,13 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>Gerenciamento de Cidades</h1>
+        <h2>Cities</h2>
 
         <div class="form-container">
             <label for="city_name">Nome da Cidade:</label>
             <input type="text" id="city_name" placeholder="Digite o nome da cidade">
             <div class="button-group">
                 <button id="saveBtn" onclick="saveCity()">Adicionar Cidade</button>
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
         </div>
 

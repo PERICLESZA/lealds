@@ -14,7 +14,7 @@
 <body>
     <div class="dashboard-container">
         <!-- Título -->
-        <h1>Dashboard de Fluxo Financeiro</h1>
+        <h2>Dashboard Cashflow</h2>
 
         <!-- Formulário para entrada de dados -->
         <div class="form-container">
@@ -24,7 +24,6 @@
             <input type="date" id="end_date" value="2025-01-31">
             <div class="button-group">
                 <button id="recalcularButton" onclick="fetchData()">Recalcular</button>
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
         </div>
 

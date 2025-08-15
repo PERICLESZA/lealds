@@ -1,26 +1,25 @@
-/* index.css */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    display: flex;
     background-color: #f5f5f5;
-    /* Cor de fundo da página */
 }
 
 .menu-container {
     display: flex;
+    height: 100vh;
+    /* ocupar altura total */
 }
 
 .sidebar {
-    width: 200px;
-    background-color: #336699;;
-    /* Azul, mesma cor do botão do login */
-    padding: 20px;
+    width: 160px;
+    background-color: #336699;
+    padding: 5px;
     color: white;
     height: 100vh;
-    /* Full height */
     position: fixed;
+    left: 0;
+    top: 0;
 }
 
 .sidebar h2 {
@@ -34,7 +33,7 @@ body {
 }
 
 .sidebar ul li {
-    margin: 15px 0;
+    margin: 5px 0;
 }
 
 .sidebar ul li a {
@@ -42,43 +41,29 @@ body {
     text-decoration: none;
     font-size: 16px;
     display: block;
+    padding: 8px 10px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    background-color: transparent;
 }
 
 .sidebar ul li a:hover {
-    background-color:#4791C5;
-    /* Cor de hover mais escura */
-    padding: 10px;
-    border-radius: 5px;
+    background-color: #4791C5;
 }
 
+/* área de conteúdo ao lado */
 .content {
-    margin-left: 220px;
-    /* Deixe espaço para a barra lateral */
-    padding: 20px;
-    width: 100%;
-}
-
-h1 {
-    color: #333;
-}
-
-.content {
-    margin-left: 220px;
-    /* Mantém espaço para a sidebar */
-    padding: 20px;
-    width: calc(100% - 220px);
-    /* Ajusta o tamanho considerando a sidebar */
+    margin-left: 160px;
+    /* igual à largura da sidebar */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /* Centraliza horizontalmente */
-    justify-content: center;
-    /* Centraliza verticalmente */
     height: 100vh;
-    /* Ocupa toda a altura da tela */
-    text-align: center;
-    /* Alinha o texto no centro */
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+}
+
+/* iframe ocupa tudo */
+.content iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
 }

@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Bancos</title>
+    <title>Banks</title>
     <link rel="stylesheet" href="../css/cadastro.css">
     <!-- Adicionar Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -14,7 +14,7 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>Gerenciamento de Bancos</h1>
+        <h2>Banks</h2>
 
         <div class="form-container">
             <label for="bank_name">Nome do Banco:</label>
@@ -26,7 +26,6 @@
 
             <div class="button-group">
                 <button id="saveBtn">Adicionar Banco</button>
-                <button id="backButton">Voltar ao Menu Principal</button>
             </div>
         </div>
 
