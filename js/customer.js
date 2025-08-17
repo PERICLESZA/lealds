@@ -30,7 +30,7 @@ function autocompleteCustomer() {
                 tr.innerHTML = `
                     <td class="action-icons">
                         <a href="#" onclick="editCustomer(${customer.idcustomer})">
-                            <i class="fas fa-edit edit-icon" title="Editar"></i>
+                            ✏️
                         </a>
                     </td>
                     <td>${customer.idcustomer}</td>
@@ -42,7 +42,7 @@ function autocompleteCustomer() {
                     <td>${customer.active == 1 ? 'Sim' : 'Não'}</td>
                     <td class="action-icons">
                         <a href="#" onclick="deleteCustomer(${customer.idcustomer})">
-                            <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
+                            🗑️
                         </a>
                     </td>
                 `;

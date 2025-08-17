@@ -13,15 +13,17 @@ function fetchClassCustomers() {
 
                 tableContent += `
                     <tr>
+                        <td class="action-icons">
+                            <a href="#" onclick="editClassCustomer(${classCustomer.idclasscustomer}, '${classCustomer.description}', ${classCustomer.seeincompany})">
+                                ✏️
+                            </a>
+                        </td>
                         <td>${classCustomer.idclasscustomer}</td>
                         <td>${classCustomer.description}</td>
                         <td><input type="checkbox" ${checked} disabled></td> <!-- Checkbox marcado ou não -->
                         <td class="action-icons">
-                            <a href="#" onclick="editClassCustomer(${classCustomer.idclasscustomer}, '${classCustomer.description}', ${classCustomer.seeincompany})">
-                                <i class="fas fa-edit edit-icon" title="Editar"></i>
-                            </a>
                             <a href="#" onclick="deleteClassCustomer(${classCustomer.idclasscustomer})">
-                                <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
+                                🗑️
                             </a>
                         </td>
                     </tr>

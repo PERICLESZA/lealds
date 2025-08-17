@@ -27,9 +27,10 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
+                        <th>Edit</th>
                         <th>ID</th>
-                        <th>Nome da Cidade</th>
-                        <th>Ações</th>
+                        <th>City name</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="city_data"></tbody>

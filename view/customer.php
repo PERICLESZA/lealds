@@ -100,16 +100,16 @@
             </div>
             <input type="hidden" id="idcustomer">
             <div class="button-group">
-                <button id="saveBtn" onclick="saveCustomer()">Adicionar Cliente</button>
+                <button id="saveBtn" onclick="saveCustomer()">Add Cliente</button>
             </div>
         </div>
 
         <div>
-            <h2>Buscar Cliente</h2>
+            <h3>Buscar Cliente</h3>
             <input
                 type="text"
                 id="searchInput"
-                placeholder="Digite o nome do cliente..."
+                placeholder="Enter the customer's name..."
                 style="width: 300px; padding: 8px; margin-bottom: 20px;">
 
         </div>
@@ -119,12 +119,12 @@
                     <tr>
                         <th>Edit</th>
                         <th>ID</th>
-                        <th>Nome</th>
+                        <th>Name</th>
                         <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Cidade</th>
-                        <th>Estado</th>
-                        <th>Ativo</th>
+                        <th>Phone</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Active'</th>
                         <th>Del</th>
                     </tr>
                 </thead>

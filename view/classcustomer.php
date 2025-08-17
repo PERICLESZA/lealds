@@ -43,10 +43,11 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
+                        <th>Edit</th>
                         <th>ID</th>
-                        <th>Descrição</th>
-                        <th>Visível na Empresa</th>
-                        <th>Ações</th>
+                        <th>Description</th>
+                        <th>Visible</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="classcustomer_data"></tbody>

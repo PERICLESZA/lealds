@@ -29,8 +29,8 @@ $nmstore = isset($_SESSION['nmstore']) ? $_SESSION['nmstore'] : 'Nenhuma loja se
             <h2>Menu</h2>
             <ul>
                 <?php if ($show_buttons): ?>
-                    <li><a href="ds.php" target="conteudo">Visão Geral</a></li>
-                    <li><a href="dsmonth.php" target="conteudo">Visão Mensal</a></li>
+                    <li><a href="ds.php" target="conteudo">Overview</a></li>
+                    <li><a href="dsmonth.php" target="conteudo">Monthly Overview</a></li>
                 <?php endif; ?>
                 <li><a href="exchange.php" target="conteudo">Exchange</a></li>
                 <li><a href="bank.php" target="conteudo">Bank</a></li>

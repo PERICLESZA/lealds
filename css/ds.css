@@ -115,7 +115,7 @@ body {
 .table {
     border-collapse: separate;
     border-spacing: 0;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     overflow: hidden;
 }
 
@@ -126,15 +126,15 @@ body {
 }
 
 /* Ajustes para arredondamento nos cantos da tabela */
-.table thead tr:first-child th {
+/* .table thead tr:first-child th {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-}
+} */
 
-.table tfoot tr:last-child th {
+/* .table tfoot tr:last-child th {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
-}
+} */
 
 .table td {
     font-size: 14px;

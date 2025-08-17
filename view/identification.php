@@ -33,7 +33,7 @@
             <input type="text" id="identification_name" placeholder="Digite o nome da identificação">
             <!-- Container com os botões lado a lado -->
             <div class="button-group">
-                <button id="saveIdentificationBtn" onclick="saveIdentification()">Adicionar Identificação</button>
+                <button id="saveIdentificationBtn" onclick="saveIdentification()">Add Identification</button>
             </div>
         </div>
 
@@ -41,9 +41,10 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nome da Identificação</th>
-                        <th>Ações</th>
+                        <th>Edit</th>
+                        <th>Id</th>
+                        <th>Identification name</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="identification_data"></tbody>

@@ -246,9 +246,10 @@ function createCashflowRow(row, index, data) {
     <input type="hidden" name="fk_idstatus" value="${fk_idstatus}">
 
     <!-- Colunas visuais -->
-    <td class="action-icons">
-      <button class="edit-btn" type="button">✏️</button>
+    <td class="edit-btn">
+        <a href="#" onclick="openEditCashflowModal(${row.idcashflow}, ${row.description}, ${row.fk_idstatus});">✏️</a>
     </td>
+                   
     <td>${valueflow}</td>
     <td>${centsflow}</td>
     <td>${percentflow}</td>
@@ -256,8 +257,10 @@ function createCashflowRow(row, index, data) {
     <td>${subtotalflow}</td>
     <td>${cents2flow}</td>
     <td>
-      <input type="checkbox" class="wire-check" name="wire" data-index="${index}" ${row.wire == 1 ? 'checked' : ''}>
-      <span class="wire-amount">${wireValue.toFixed(2)}</span>
+      <div class="wire-cell">
+        <input type="checkbox" class="wire-check" name="wire" data-index="${index}" ${row.wire == 1 ? 'checked' : ''}>
+        <span class="wire-amount">${valuewire.toFixed(2)}</span>
+      </div>
     </td>
     <td>
       <input type="checkbox" class="cashflowok-check" name="cashflowok" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
@@ -266,8 +269,9 @@ function createCashflowRow(row, index, data) {
     <td>${new Date(`1970-01-01T${tchaflow}`).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
     <td class="totalflow">${totalflow.toFixed(2)}</td>
     <td class="totaltopay">${totaltopay.toFixed(2)}</td>
-    <td>
-        <button class="delete-btn" data-id="${row.idcashflow}">🗑️</button>
+
+    <td class="delete-btn">
+        <a href="#" onclick="deleteCashflowEntry(${row.idcashflow}); return false;">🗑️</a>
     </td>
   `;
 
@@ -315,14 +319,14 @@ function addWireCheckboxHandler(tr, rowData) {
 function addDeleteButtonHandler(tr, idcashflow) {
   const btn = tr.querySelector('.delete-btn');
   if (!btn) {
-    console.warn('Botão delete não encontrado:', tr);
+    console.warn('Del button not found:', tr);
     return;
   }
 
   btn.addEventListener('click', () => {
     // console.log('ID passado para deleteCashflowEntry:', idcashflow);
     if (!idcashflow || isNaN(idcashflow)) {
-      alert('ID inválido');
+      alert('Inavlid ID');
       return;
     }
     deleteCashflowEntry(idcashflow);
@@ -331,24 +335,25 @@ function addDeleteButtonHandler(tr, idcashflow) {
 
 function deleteCashflowEntry(idcashflow) {
   // console.log("Chamando backend com ID:", idcashflow); // deve mostrar um número
-
-  fetch(`../controller/exchangeController.php?action=delete&id=${idcashflow}`, {
-    method: 'GET',
-  })
-    .then(res => res.json())
-    .then(result => {
-      if (result.success) {
-        alert("Excluído com sucesso!");
-        const idCustomer = document.getElementById('idcustomer')?.value ?? 0;
-        const cashflowok = document.getElementById('filterOk')?.value ?? 0;
-        fetchCashflowData(idCustomer, cashflowok).then(updateCashflowTable);
-      } else {
-        alert('Erro: ' + result.error);
-      }
+  if (confirm("Are you sure you want to delete this record?")) {
+    fetch(`../controller/exchangeController.php?action=delete&id=${idcashflow}`, {
+      method: 'GET',
     })
-    .catch(err => {
-      console.error("Erro na exclusão:", err);
-    });
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          alert("Excluído com sucesso!");
+          const idCustomer = document.getElementById('idcustomer')?.value ?? 0;
+          const cashflowok = document.getElementById('filterOk')?.value ?? 0;
+          fetchCashflowData(idCustomer, cashflowok).then(updateCashflowTable);
+        } else {
+          alert('Erro: ' + result.error);
+        }
+      })
+      .catch(err => {
+        console.error("Erro na exclusão:", err);
+      });
+  }
 }
 
 

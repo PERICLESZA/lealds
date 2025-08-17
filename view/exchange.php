@@ -14,7 +14,7 @@
 
 <body>
     <div class="dashboard-container">
-
+        <h1 style="text-align: left;">Exchange</h1>
         <!-- Campo de busca -->
         <div class="cad-group top">
             <div class="input-container">

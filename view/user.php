@@ -22,11 +22,11 @@
                     <input type="text" id="login" placeholder="Digite o login">
                 </div>
                 <div class="input-container">
-                    <label for="senha">Senha</label>
+                    <label for="senha">Password</label>
                     <input type="password" id="senha" placeholder="Digite a senha">
                 </div>
                 <div class="input-container">
-                    <label for="nome">Nome</label>
+                    <label for="nome">Name</label>
                     <input type="text" id="nome" placeholder="Digite o nome">
                 </div>
                 <div class="input-container">
@@ -34,23 +34,23 @@
                     <input type="email" id="email" placeholder="Digite o email">
                 </div>
                 <div class="input-container">
-                    <label for="perfil">Perfil</label>
+                    <label for="perfil">Profile</label>
                     <select id="perfil">
-                        <option value="A">Administrador</option>
-                        <option value="U">Usuário</option>
+                        <option value="A">Admin</option>
+                        <option value="U">User</option>
                     </select>
                 </div>
                 <div class="input-container">
-                    <label for="active">Ativo</label>
+                    <label for="active">Active</label>
                     <select id="active">
-                        <option value="1">Sim</option>
-                        <option value="0">Não</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
                     </select>
                 </div>
             </div>
 
             <div class="button-group">
-                <button id="saveBtn" onclick="saveUser()">Adicionar Usuário</button>
+                <button id="saveBtn" onclick="saveUser()">Add user</button>
             </div>
         </div>
 
@@ -58,13 +58,14 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Edit</th>
+                        <th>Id</th>
                         <th>Login</th>
-                        <th>Nome</th>
+                        <th>Name</th>
                         <th>Email</th>
-                        <th>Perfil</th>
-                        <th>Ativo</th>
-                        <th>Ações</th>
+                        <th>Profile</th>
+                        <th>Active</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="user_data"></tbody>

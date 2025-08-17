@@ -33,11 +33,12 @@
             <table border="0" class="table">
                 <thead>
                     <tr>
+                        <th>Edit</th>
                         <th>ID</th>
                         <th>Nome do Banco</th>
                         <th>Agência</th>
                         <th>Conta</th>
-                        <th>Ações</th>
+                        <th>Del</th>
                     </tr>
                 </thead>
                 <tbody id="bank_data"></tbody>

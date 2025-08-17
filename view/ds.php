@@ -1,4 +1,9 @@
-<?php include '../controller/auth.php'; ?>
+<?php include '../controller/auth.php'; 
+
+$start_date = $_GET['start_date'] ?? '2025-01-01';
+$end_date = $_GET['end_date'] ?? '2025-12-31';
+
+?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -8,6 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Fluxo Financeiro</title>
     <link rel="stylesheet" href="../css/ds.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
 
 </head>
 
@@ -17,15 +23,17 @@
         <h2>Dashboard Cashflow</h2>
 
         <!-- Formulário para entrada de dados -->
-        <div class="form-container">
-            <label for="start_date">Data de Início:</label>
-            <input type="date" id="start_date" value="2025-01-01">
-            <label for="end_date">Data de Fim:</label>
-            <input type="date" id="end_date" value="2025-01-31">
-            <div class="button-group">
-                <button id="recalcularButton" onclick="fetchData()">Recalcular</button>
+        <form method="get" class="form-container">
+            <div class="cad-group">
+                <label>Start date:
+                    <input type="date" id="start_date" name="start_date" value="<?= htmlspecialchars($start_date) ?>">
+                </label>
+                <label>End date:
+                    <input type="date" id="end_date" name="end_date" value="<?= htmlspecialchars($end_date) ?>">
+                </label>
             </div>
-        </div>
+            <button type="submit">Filter</button>
+        </form>
 
         <!-- Tabela de dados -->
         <div class="table-container">

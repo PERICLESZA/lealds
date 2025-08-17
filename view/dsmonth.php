@@ -58,13 +58,26 @@ foreach ($monthly_totals as $db_name => $monthly_data) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Financial</title>
     <link rel="stylesheet" href="../css/ds.css">
+    <link rel="stylesheet" href="../css/cadastro.css">
 </head>
 
 <body>
     <div class="dashboard-container">
-        <h1>Monthly Financial</h1>
+        <h2>Monthly Financial</h2>
 
-        <div class="form-container">
+        <form method="get" class="form-container">
+            <div class="cad-group">
+                <label>Start date:
+                    <input type="date" id="start_date" name="start_date" value="<?= htmlspecialchars($start_date) ?>">
+                </label>
+                <label>End date:
+                    <input type="date" id="end_date" name="end_date" value="<?= htmlspecialchars($end_date) ?>">
+                </label>
+            </div>
+            <button type="submit">Filter</button>
+        </form>
+
+        <!-- <div class="form-container">
             <label for="start_date">Data de Início:</label>
             <input type="date" id="start_date" name="start_date" value="<?= htmlspecialchars($start_date) ?>" required>
 
@@ -74,10 +87,9 @@ foreach ($monthly_totals as $db_name => $monthly_data) {
 
             <div class="button-group">
                 <button id="fetchButton">Recalcular</button>
-                <!-- <button id="recalcularButton" onclick="fetchData()">Recalcular</button> -->
             </div>
 
-        </div>
+        </div> -->
 
         <!-- <h2>Relatório de Fluxo de <?= htmlspecialchars($start_date) ?> à <?= htmlspecialchars($end_date) ?></h2> -->
 

@@ -11,15 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 data.forEach((identification) => {
                     tableContent += `
                         <tr>
+                            <td class="action-icons">
+                                <a href="#" onclick="editIdentification(${identification.ididentification}, '${identification.nameidentification}')">✏️</a>
+                            </td>
                             <td>${identification.ididentification}</td>
                             <td>${identification.nameidentification}</td>
                             <td class="action-icons">
-                                <a href="#" onclick="editIdentification(${identification.ididentification}, '${identification.nameidentification}')">
-                                    <i class="fas fa-edit edit-icon" title="Editar"></i>
-                                </a>
-                                <a href="#" onclick="deleteIdentification(${identification.ididentification})">
-                                    <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
-                                </a>
+                                <a href="#" onclick="deleteIdentification(${identification.ididentification})">🗑️</a>
                             </td>
                         </tr>
                     `;

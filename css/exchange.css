@@ -194,3 +194,13 @@ hr {
     }
 }
 
+.wire-cell {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* espaço entre checkbox e valor */
+}
+
+a {
+    text-decoration: none;
+}

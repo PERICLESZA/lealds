@@ -10,14 +10,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 data.forEach(city => {
                     tableContent += `
                         <tr>
+                            <td class="action-icons">
+                                <a href="#" onclick="editCity(${city.idcity}, '${city.name_city}')">
+                                    ✏️
+                                </a>
+                            </td>
                             <td>${city.idcity}</td>
                             <td>${city.name_city}</td>
                             <td class="action-icons">
-                                <a href="#" onclick="editCity(${city.idcity}, '${city.name_city}')">
-                                    <i class="fas fa-edit edit-icon" title="Editar"></i>
-                                </a>
                                 <a href="#" onclick="deleteCity(${city.idcity})">
-                                    <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
+                                    🗑️
                                 </a>
                             </td>
                         </tr>

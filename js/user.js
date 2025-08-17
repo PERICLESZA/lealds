@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("backButton").addEventListener("click", function () {
-        window.location.href = "../view/menuprincipal.php";
-    });
 
     let editingUserId = null;
 
@@ -13,6 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 data.forEach(user => {
                     tableContent += `
                         <tr>
+                            <td class="action-icons">
+                                <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">✏️</a>
+                            </td>
                             <td>${user.idlogin}</td>
                             <td>${user.login}</td>
                             <td>${user.nome}</td>
@@ -20,12 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${user.perfil}</td>
                             <td>${user.active}</td>
                             <td class="action-icons">
-                                <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">
-                                    <i class="fas fa-edit edit-icon" title="Editar"></i>
-                                </a>
-                                <a href="#" onclick="deleteUser(${user.idlogin})">
-                                    <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
-                                </a>
+                                <a href="#" onclick="deleteUser(${user.idlogin})">🗑️</a>
                             </td>
                         </tr>
                     `;
@@ -81,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function deleteUser(id) {
-        if (confirm("Tem certeza que deseja excluir este usuário?")) {
+        if (confirm("Are you sure you want to delete this user?")) {
             fetch('../controller/usercontroller.php?action=delete', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

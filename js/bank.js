@@ -15,17 +15,15 @@ function fetchBanks() {
             data.forEach(bank => {
                 tableContent += `
                     <tr>
+                        <td class="action-icons">
+                            <a href="#" onclick="editBank(${bank.idbank}, '${bank.namebank}', '${bank.agency}', '${bank.count}')">✏️</a>
+                        </td>
                         <td>${bank.idbank}</td>
                         <td>${bank.namebank}</td>
                         <td>${bank.agency}</td>
                         <td>${bank.count}</td>
                         <td class="action-icons">
-                            <a href="#" onclick="editBank(${bank.idbank}, '${bank.namebank}', '${bank.agency}', '${bank.count}')">
-                                <i class="fas fa-edit edit-icon" title="Editar"></i>
-                            </a>
-                            <a href="#" onclick="deleteBank(${bank.idbank})">
-                                <i class="fas fa-trash-alt delete-icon" title="Excluir"></i>
-                            </a>
+                            <a href="#" onclick="deleteBank(${bank.idbank})">🗑️</a>
                         </td>
                     </tr>
                 `;
