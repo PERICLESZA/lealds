@@ -222,6 +222,7 @@ function createCashflowRow(row, index, data) {
   const valuewire = parseFloat(row.wireValue) || 0;
 
   const dtcashflow = row.dtcashflow ?? '';
+  console.log("data localizada:", row.dtcashflow, row.valueflow)
   const tchaflow = row.tchaflow ?? '';
 
   const description =     row.description ?? '';
@@ -265,7 +266,7 @@ function createCashflowRow(row, index, data) {
     <td>
       <input type="checkbox" class="cashflowok-check" name="cashflowok" data-id="${row.idcashflow}" ${row.cashflowok == 1 ? 'checked' : ''}>
     </td>
-    <td>${new Date(dtcashflow).toLocaleDateString('pt-BR')}</td>
+    <td>${dtcashflow}</td>
     <td>${new Date(`1970-01-01T${tchaflow}`).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</td>
     <td class="totalflow">${totalflow.toFixed(2)}</td>
     <td class="totaltopay">${totaltopay.toFixed(2)}</td>

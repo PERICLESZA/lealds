@@ -74,7 +74,7 @@ $totalPay = 0;
                     <input type="date" name="fim" value="<?= htmlspecialchars($dataFim) ?>">
                 </label>
             </div>
-            <button type="submit">Filtrar</button>
+            <button type="submit">Filter</button>
         </form>
 
         <h3 style="text-align:center;">
@@ -117,7 +117,7 @@ $totalPay = 0;
                                 <?= htmlspecialchars($row['name'] ?? '') ?>
                             </td>
                             <td>
-                                <?= date('d/m/Y', strtotime($row['dtcashflow'])) ?>
+                                <?= $row['dtcashflow'] ?>
                             </td>
                             <td>
                                 <?= !empty($row['tchaflow']) ? date('H:i', strtotime($row['tchaflow'])) : '' ?>

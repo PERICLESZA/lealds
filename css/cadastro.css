@@ -347,3 +347,10 @@ input[type="text"] {
 a {
     text-decoration: none;
 }
+
+.red-row {
+    background-color: #ffcccc !important;
+    /* fundo vermelho claro */
+    color: red !important;
+    /* texto vermelho */
+}
