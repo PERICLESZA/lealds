@@ -64,13 +64,7 @@ $end_date = $_GET['end_date'] ?? '2025-12-31';
             </table>
         </div>
     </div>
-
-    <script>
-        document.getElementById("backButton").addEventListener("click", function() {
-            window.location.href = "../view/menuprincipal.php";
-        });
-    </script>
-
+    
     <script>
         function fetchData() {
             let startDate = document.getElementById("start_date").value;

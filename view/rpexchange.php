@@ -10,6 +10,8 @@ $conn->exec("SET time_zone = '-03:00'");
 $dataInicio = $_GET['inicio'] ?? date('Y-m-01');
 $dataFim = $_GET['fim'] ?? date('Y-m-t');
 $statusSelecionado = $_GET['fk_idstatus'] ?? '';
+$deleted = $_GET['deleted'] ?? '';
+
 
 // Ajusta datas
 $dataInicioCompleta = $dataInicio . ' 00:00:00';
@@ -31,7 +33,8 @@ $sql = "SELECT
     c.cashflowok,
     c.idlogin,
     c.fk_idstatus,
-    s.description
+    s.description,
+    c.excluido
 FROM cashflow c
 LEFT JOIN customer cust ON cust.idcustomer = c.fk_idcustomer
 LEFT JOIN status s ON s.idstatus = c.fk_idstatus
@@ -40,6 +43,10 @@ WHERE c.dtcashflow BETWEEN :inicio AND :fim";
 // Se o status foi informado, filtra também
 if (!empty($statusSelecionado)) {
     $sql .= " AND c.fk_idstatus = :status";
+}
+
+if ($deleted !== '') {
+    $sql .= " AND c.excluido = :deleted";
 }
 
 $sql .= " ORDER BY c.dtcashflow DESC, c.tchaflow DESC";
@@ -52,6 +59,9 @@ if (!empty($statusSelecionado)) {
     $stmt->bindValue(':status', $statusSelecionado, PDO::PARAM_INT);
 }
 
+if ($deleted !== '') {
+    $stmt->bindValue(':deleted', $deleted, PDO::PARAM_INT);
+}
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -97,14 +107,22 @@ $totalPay = 0;
                 <div class="input-container">
                     <label for="fk_idstatus">Status</label>
                     <select id="fk_idstatus" name="fk_idstatus">
-                        <option value="">-- Todos --</option>
+                        <option value="">-- All --</option>
                         <?php foreach ($statusList as $status): ?>
-                            <option value="<?= $status['idstatus'] ?>"
-                                <?= ($statusSelecionado == $status['idstatus']) ? 'selected' : '' ?>>
+                            <option value="<?= $status['idstatus'] ?>" <?= ($statusSelecionado == $status['idstatus']) ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($status['description']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="input-container">
+                    <label for="deleted">Deleted</label>
+                    <select id="deleted" name="deleted">
+                        <option value="">-- All --</option>
+                        <option value="1" <?= ($deleted === '1') ? 'selected' : '' ?>>Yes</option>
+                        <option value="0" <?= ($deleted === '0') ? 'selected' : '' ?>>No</option>
+                    </select>
+
                 </div>
             </div>
             <button type="submit">Filter</button>
@@ -182,4 +200,5 @@ $totalPay = 0;
     </div>
 
 </body>
+
 </html>
