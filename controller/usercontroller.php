@@ -16,15 +16,34 @@ switch ($action) {
         updateUser($conn);
         break;
     case 'delete':
-        deleteUser($conn);
+        $idlogin = $_GET['idlogin'] ?? 0;
+        $result = deleteUserById($conn, $idlogin);
+        echo json_encode($result);
         break;
+    // case 'delete':
+    //     deleteUser($conn);
+    //     break;
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
 
+// ❌ Exclusão de lançamento
+function deleteUserById($conn, $id)
+{
+    try {
+        $stmt = $conn->prepare("UPDATE login SET excluido = 1 WHERE idlogin = ?");
+        $stmt->execute([$id]);
+        return ['success' => true];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
+
 function listUsers($conn)
 {
-    $sql = "SELECT idlogin, login, nome, email, perfil, active FROM login ORDER BY nome ASC";
+    $sql = "SELECT idlogin, login, nome, email, perfil, active FROM login 
+    WHERE excluido=0
+    ORDER BY nome ASC";
     $stmt = $conn->query($sql);
     echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 }

@@ -33,8 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Verificar se encontrou um usuário
     if ($stmt->rowCount() > 0) {
+        // Pegar os dados do usuário logado
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
         // Criar sessão do usuário
-        $_SESSION['usuario'] = $login;
+        $_SESSION['usuario'] = $usuario['login']; // ou $login
+        $_SESSION['idlogin'] = $usuario['idlogin']; // <-- aqui guarda o idlogin
         $_SESSION['key'] = $key;
 
         // Definir a loja com base na Key
@@ -66,4 +70,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: /index.php?error=Login ou senha inválidos");
         exit;
     }
+
 }

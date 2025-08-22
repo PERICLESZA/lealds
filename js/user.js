@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td>${user.perfil}</td>
                             <td>${user.active}</td>
                             <td class="action-icons">
-                                <a href="#" onclick="deleteUser(${user.idlogin})">🗑️</a>
+                                <a href="#" onclick="deleteUserEntry(${user.idlogin})">🗑️</a>
                             </td>
                         </tr>
                     `;
@@ -75,19 +75,30 @@ document.addEventListener("DOMContentLoaded", function () {
         editingUserId = id;
     }
 
-    function deleteUser(id) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            fetch('../controller/usercontroller.php?action=delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `idlogin=${id}`
-            }).then(() => fetchUsers());
+    function deleteUserEntry(idlogin) {
+        // console.log("Chamando backend com ID:", idcashflow); // deve mostrar um número
+        if (confirm("Are you sure you want to delete this record?")) {
+            fetch(`../controller/usercontroller.php?action=delete&idlogin=${idlogin}`, {
+            method: 'GET',
+            })
+            .then(res => res.json())
+            .then(result => {
+                if (result.success) {
+                alert("Excluído com sucesso!");
+                fetchUsers();
+                } else {
+                alert('Erro: ' + result.error);
+                }
+            })
+            .catch(err => {
+                console.error("Erro na exclusão:", err);
+            });
         }
     }
 
     window.saveUser = saveUser;
     window.editUser = editUser;
-    window.deleteUser = deleteUser;
+    window.deleteUserEntry = deleteUserEntry;
 
     fetchUsers();
 });
