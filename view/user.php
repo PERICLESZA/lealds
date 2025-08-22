@@ -59,6 +59,7 @@
                 <thead>
                     <tr>
                         <th>Edit</th>
+                        <th>Rule</th>
                         <th>Id</th>
                         <th>Login</th>
                         <th>Name</th>

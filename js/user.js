@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             <td class="action-icons">
                                 <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">✏️</a>
                             </td>
+                            <td class="action-icons">
+                                <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">🔒</a>
+                            </td>
+                            
                             <td>${user.idlogin}</td>
                             <td>${user.login}</td>
                             <td>${user.nome}</td>
