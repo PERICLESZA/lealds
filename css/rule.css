@@ -1,0 +1,23 @@
+    .checkbox-container {
+        display: flex;
+        /* Permite o alinhamento dos elementos filhos */
+        align-items: center;
+        /* Centraliza verticalmente os elementos */
+    }
+
+    .checkbox-container label {
+        margin-left: 5px;
+        /* Adiciona um pequeno espaço entre o checkbox e o texto da label */
+    }
+
+    label {
+        margin-left: -5px;
+        /* Ajuste o valor conforme necessário */
+        display: inline-flex;
+        align-items: center;
+    }
+
+    input[type="checkbox"] {
+        margin-right: 0;
+        /* Remove o espaço padrão do input se houver */
+    }

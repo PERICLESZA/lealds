@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">✏️</a>
                             </td>
                             <td class="action-icons">
-                                <a href="#" onclick="editUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">🔒</a>
+                                <a href="#" onclick="ruleUser(${user.idlogin}, '${user.login}', '${user.nome}', '${user.email}', '${user.perfil}', '${user.active}')">🔒</a>
                             </td>
                             
                             <td>${user.idlogin}</td>

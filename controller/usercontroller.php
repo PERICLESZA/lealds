@@ -20,9 +20,13 @@ switch ($action) {
         $result = deleteUserById($conn, $idlogin);
         echo json_encode($result);
         break;
-    // case 'delete':
-    //     deleteUser($conn);
-    //     break;
+    case 'getRule':
+        $idlogin = $_GET['idlogin'] ?? 0;
+        getRule($conn, $idlogin);
+        break;
+    case 'updateRule':
+        updateRule($conn);
+        break;
     default:
         echo json_encode(["error" => "Ação inválida"]);
 }
@@ -124,4 +128,47 @@ function deleteUser($conn)
     } else {
         echo json_encode(["error" => "Erro ao excluir usuário"]);
     }
+}
+
+function getRule($conn, $idlogin)
+{
+    $stmt = $conn->prepare("SELECT * FROM rule WHERE idlogin = ?");
+    $stmt->execute([$idlogin]);
+    $rule = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($rule ?: []);
+}
+
+function updateRule($conn)
+{
+    $idlogin = $_POST['idlogin'];
+
+    $sql = "UPDATE rule SET 
+        Exchange = :Exchange,
+        City = :City,
+        Bank = :Bank,
+        Overwiew = :Overwiew,
+        MonthlyOverview = :MonthlyOverview,
+        ClassCustomer = :ClassCustomer,
+        Customer = :Customer,
+        Identification = :Identification,
+        User = :User,
+        Report = :Report
+        WHERE idlogin = :idlogin";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([
+        ':Exchange' => $_POST['Exchange'],
+        ':City' => $_POST['City'],
+        ':Bank' => $_POST['Bank'],
+        ':Overwiew' => $_POST['Overwiew'],
+        ':MonthlyOverview' => $_POST['MonthlyOverview'],
+        ':ClassCustomer' => $_POST['ClassCustomer'],
+        ':Customer' => $_POST['Customer'],
+        ':Identification' => $_POST['Identification'],
+        ':User' => $_POST['User'],
+        ':Report' => $_POST['Report'],
+        ':idlogin' => $idlogin
+    ]);
+
+    echo json_encode(['success' => true]);
 }
