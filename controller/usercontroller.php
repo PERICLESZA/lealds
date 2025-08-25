@@ -25,7 +25,9 @@ switch ($action) {
         getRule($conn, $idlogin);
         break;
     case 'updateRule':
-        updateRule($conn);
+        $idlogin = $_GET['idlogin'] ?? 0;
+        $result = updateRule($conn, $idlogin);
+        echo json_encode($result);
         break;
     default:
         echo json_encode(["error" => "Ação inválida"]);
@@ -138,17 +140,18 @@ function getRule($conn, $idlogin)
     echo json_encode($rule ?: []);
 }
 
-function updateRule($conn)
+function updateRule($conn, $idlogin)
 {
-    $idlogin = $_POST['idlogin'];
+    // 👇 Veja o que chegou do JS
+    error_log("📩 POST recebido: " . json_encode($_POST) . "idlogin:" . $idlogin);
 
     $sql = "UPDATE rule SET 
         Exchange = :Exchange,
         City = :City,
         Bank = :Bank,
         Overwiew = :Overwiew,
-        MonthlyOverview = :MonthlyOverview,
-        ClassCustomer = :ClassCustomer,
+        `Monthly Overview` = :MonthlyOverview,
+        `Class Customer` = :ClassCustomer,
         Customer = :Customer,
         Identification = :Identification,
         User = :User,
@@ -167,8 +170,8 @@ function updateRule($conn)
         ':Identification' => $_POST['Identification'],
         ':User' => $_POST['User'],
         ':Report' => $_POST['Report'],
-        ':idlogin' => $idlogin
+        ':idlogin' => $_POST['idlogin'],
     ]);
 
-    echo json_encode(['success' => true]);
+    return ['success' => true]; // ✅ agora retorna
 }

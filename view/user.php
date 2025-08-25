@@ -81,9 +81,11 @@
                 <h2>Permissões</h2>
 
                 <div class="modalrule-body">
+                    
+                    <input type="hidden" id="rule_idlogin" name="rule_idlogin">
 
                     <div class="cad-group">
-
+                        
                         <div class="checkbox-container">
                             <label>
                                 <input type="checkbox" id="rule_exchange" name="rule_exchange" value="0">Exchange
@@ -155,8 +157,8 @@
                 </div>
 
                 <div class="modalrule-footer">
-                    <button onclick="saveRules()">Salvar</button>
-                    <button onclick="closeEditRuleModal()">Cancelar</button>
+                    <button onclick="updateRule()">Save</button>
+                    <button onclick="closeEditRuleModal()">Cancel</button>
                 </div>
             </div>
         </div>

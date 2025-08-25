@@ -9,7 +9,8 @@ function ruleUser(idlogin) {
         .then(rule => {
             
             if (rule) {
-                console.log(rule);
+                // console.log(rule);
+                document.getElementById("rule_idlogin").value = idlogin;
                 document.getElementById("rule_exchange").checked = rule.Exchange === 1;
                 document.getElementById("rule_city").checked = rule.City === 1;
                 document.getElementById("rule_bank").checked = rule.Bank === 1;
@@ -30,22 +31,23 @@ function closeEditRuleModal() {
 }
 
 function updateRule() {
-    const idlogin = document.getElementById("rule_idlogin").value;
+    // const idlogin = document.getElementById("rule_idlogin").value;
 
     const body = new URLSearchParams({
-        idlogin,
-        Exchange: document.getElementById("rule_exchange").value,
-        City: document.getElementById("rule_city").value,
-        Bank: document.getElementById("rule_bank").value,
-        Overwiew: document.getElementById("rule_overview").value,
-        MonthlyOverview: document.getElementById("rule_monthly").value,
-        ClassCustomer: document.getElementById("rule_classcustomer").value,
-        Customer: document.getElementById("rule_customer").value,
-        Identification: document.getElementById("rule_identification").value,
-        User: document.getElementById("rule_user").value,
-        Report: document.getElementById("rule_report").value
+        idlogin: document.getElementById("rule_idlogin").value,
+        Exchange: document.getElementById("rule_exchange").checked ? 1 : 0,
+        City: document.getElementById("rule_city").checked ? 1 : 0,
+        Bank: document.getElementById("rule_bank").checked ? 1 : 0,
+        Overwiew: document.getElementById("rule_overview").checked ? 1 : 0,
+        "MonthlyOverview": document.getElementById("rule_monthly").checked ? 1 : 0,
+        "ClassCustomer": document.getElementById("rule_classcustomer").checked ? 1 : 0,
+        Customer: document.getElementById("rule_customer").checked ? 1 : 0,
+        Identification: document.getElementById("rule_identification").checked ? 1 : 0,
+        User: document.getElementById("rule_user").checked ? 1 : 0,
+        Report: document.getElementById("rule_report").checked ? 1 : 0
     });
 
+    // console.log("Dados enviados:", body.toString());
     fetch("../controller/usercontroller.php?action=updateRule", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
