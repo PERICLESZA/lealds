@@ -67,7 +67,7 @@ switch ($action) {
 function deleteCashflowById($conn, $id)
 {
     try {
-        $stmt = $conn->prepare("UPDATE cashflow SET excluido = 1 WHERE idcashflow = ?");
+        $stmt = $conn->prepare("UPDATE cashflow SET excluido = 1, fk_idstatus = 7 WHERE idcashflow = ?");
         $stmt->execute([$id]);
         return ['success' => true];
     } catch (PDOException $e) {
@@ -103,7 +103,9 @@ function searchCustomer($conn)
     $sql = "SELECT idcustomer, name, phone
             FROM customer
             WHERE (name LIKE :term OR phone LIKE :term)
-              AND name IS NOT NULL AND name <> ''
+              AND active = '1' 
+              AND name IS NOT NULL 
+              AND name <> ''
             ORDER BY name ASC
             LIMIT 10";
     $stmt = $conn->prepare($sql);
@@ -219,15 +221,16 @@ function insertCashflow(PDO $conn, array $data): bool
     $dataAtual = $data['dtcashflow'] ?? $dt->format('Y-m-d'); // fallback se não vier nada
     $horaAtual = $dt->format('H:i:s');
     $fk_idstatus = !empty($data['fk_idstatus']) ? $data['fk_idstatus'] : 1;
+    $idlogin = $_SESSION['usuario'];
 
     $stmt = $conn->prepare("
         INSERT INTO cashflow 
         (
             valueflow, centsflow, valuepercentflow, cents2flow, 
             percentflow, totalflow, totaltopay, dtcashflow, tchaflow, subtotalflow,
-            fk_idcustomer, fk_idbankmaster, valuewire, description, fk_idstatus
+            fk_idcustomer, fk_idbankmaster, valuewire, description, fk_idstatus, idlogin
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     return $stmt->execute([
@@ -245,7 +248,8 @@ function insertCashflow(PDO $conn, array $data): bool
         $data['fk_idbankmaster'],
         $data['valuewire'],
         $data['description'],
-        $fk_idstatus
+        $fk_idstatus,
+        $idlogin
     ]);
 }
 

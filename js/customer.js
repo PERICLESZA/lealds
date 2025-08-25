@@ -15,7 +15,7 @@ function autocompleteCustomer() {
     const query = document.getElementById('searchInput').value.trim();
 
     if (query.length < 4) {
-        document.getElementById('customerTable').innerHTML = '';
+        document.getElementById('customer_data').innerHTML = '';
         return;
     }
 
@@ -41,7 +41,7 @@ function autocompleteCustomer() {
                     <td>${customer.state}</td>
                     <td>${customer.active == 1 ? 'Sim' : 'Não'}</td>
                     <td class="action-icons">
-                        <a href="#" onclick="deleteCustomer(${customer.idcustomer})">
+                        <a href="#" onclick="deleteCustomer(${customer.idcustomer}, '${customer.name}')">
                             🗑️
                         </a>
                     </td>
@@ -155,33 +155,57 @@ function editCustomer(id) {
         });
 }
 
-function deleteCustomer(id) {
-    if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
+// function deleteCustomer(id) {
+//     if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
 
-    fetch('../controller/customercontroller.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-            action: 'delete',
-            idcustomer: id
+//     fetch('../controller/customercontroller.php', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         body: new URLSearchParams({
+//             action: 'delete',
+//             idcustomer: id
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             alert(data.success);
+//             loadCustomerList(); // recarrega a lista após exclusão
+//         } else {
+//             alert(data.error || "Erro ao excluir cliente.");
+//         }
+//     })
+//     .catch(error => {
+//         console.error("Erro ao excluir cliente:", error);
+//         alert("Erro ao excluir cliente.");
+//     });
+// }
+
+function deleteCustomer(idcustomer, name_customer) {
+    // console.log("Chamando backend com ID:", id); // deve mostrar um número
+    if (confirm("Are you sure you want to delete: " + name_customer +"?")) {
+        fetch(`../controller/customercontroller.php?action=delete&idcustomer=${idcustomer}`, {
+        method: 'GET',
         })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.success);
-            loadCustomerList(); // recarrega a lista após exclusão
-        } else {
-            alert(data.error || "Erro ao excluir cliente.");
-        }
-    })
-    .catch(error => {
-        console.error("Erro ao excluir cliente:", error);
-        alert("Erro ao excluir cliente.");
-    });
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+            alert("Deleted successfully!");
+            autocompleteCustomer();
+            } else {
+            alert('Erro: ' + result.error);
+            }
+        })
+        .catch(err => {
+            console.error("Error deleting:", err);
+        });
+    }
 }
+
+
+
 
 function updateCustomer() {
     const formData = new FormData();

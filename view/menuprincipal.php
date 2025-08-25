@@ -9,7 +9,7 @@ if (!isset($_SESSION['idlogin'])) {
 }
 
 $idlogin = $_SESSION['idlogin'];
-
+$usuario = $_SESSION['usuario'];
 // Conexão
 $pdo = $connections['cedroibr7'];
 
@@ -89,15 +89,20 @@ $nmstore = isset($_SESSION['nmstore']) ? $_SESSION['nmstore'] : 'Nenhuma loja se
                 <?php if (!empty($rules['Report']) && $rules['Report'] == 1): ?>
                     <li><a href="rpexchange.php" target="conteudo">Report</a></li>
                 <?php endif; ?>
-
                 <br><br>
+
+                <div>
+                    <strong>Logged:</strong>
+                    <?php echo $usuario; ?>
+                </div>
+                <br>
                 <a href="../controller/logout.php">Logout</a>
             </ul>
 
-            <div class="store-info">
+            <!-- <div class="store-info">
                 <strong>Loja:</strong>
                 <p><?php echo htmlspecialchars($nmstore); ?></p>
-            </div>
+            </div> -->
         </div>
 
         <div class="content">

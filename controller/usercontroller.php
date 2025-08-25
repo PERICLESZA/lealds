@@ -33,7 +33,7 @@ switch ($action) {
         echo json_encode(["error" => "Ação inválida"]);
 }
 
-// ❌ Exclusão de lançamento
+// ❌ Exclusão de User (campo excluido)
 function deleteUserById($conn, $id)
 {
     try {
@@ -114,23 +114,23 @@ function updateUser($conn)
     }
 }
 
-function deleteUser($conn)
-{
-    $idlogin = $_POST['idlogin'] ?? '';
-    if (empty($idlogin)) {
-        echo json_encode(["error" => "ID inválido"]);
-        return;
-    }
+// function deleteUser($conn)
+// {
+//     $idlogin = $_POST['idlogin'] ?? '';
+//     if (empty($idlogin)) {
+//         echo json_encode(["error" => "ID inválido"]);
+//         return;
+//     }
 
-    $stmt = $conn->prepare("DELETE FROM login WHERE idlogin = :idlogin");
-    $stmt->bindParam(":idlogin", $idlogin);
+//     $stmt = $conn->prepare("DELETE FROM login WHERE idlogin = :idlogin");
+//     $stmt->bindParam(":idlogin", $idlogin);
 
-    if ($stmt->execute()) {
-        echo json_encode(["success" => "Usuário excluído com sucesso"]);
-    } else {
-        echo json_encode(["error" => "Erro ao excluir usuário"]);
-    }
-}
+//     if ($stmt->execute()) {
+//         echo json_encode(["success" => "Usuário excluído com sucesso"]);
+//     } else {
+//         echo json_encode(["error" => "Erro ao excluir usuário"]);
+//     }
+// }
 
 function getRule($conn, $idlogin)
 {

@@ -154,21 +154,31 @@ function updateCustomer($conn)
     echo json_encode(["success" => "Cliente atualizado com sucesso"]);
 }
 
+// ❌ Exclusão de User (campo excluido)
+function deleteUserById($conn, $id)
+{
+    try {
+        $stmt = $conn->prepare("UPDATE login SET excluido = 1 WHERE idlogin = ?");
+        $stmt->execute([$id]);
+        return ['success' => true];
+    } catch (PDOException $e) {
+        return ['success' => false, 'error' => $e->getMessage()];
+    }
+}
 function deleteCustomer($conn)
 {
-    $idcustomer = $_POST['idcustomer'] ?? null;
+    $idcustomer = $_GET['idcustomer'] ?? null;
+
     if (!$idcustomer) {
         echo json_encode(["error" => "ID inválido"]);
         return;
     }
-
-    $stmt = $conn->prepare("DELETE FROM customer WHERE idcustomer = :idcustomer");
-    $stmt->bindParam(":idcustomer", $idcustomer);
-
-    if ($stmt->execute()) {
-        echo json_encode(["success" => "Cliente excluído com sucesso"]);
-    } else {
-        echo json_encode(["error" => "Erro ao excluir cliente"]);
+    try {
+        $stmt = $conn->prepare("UPDATE customer SET active = '0' WHERE idcustomer = ?");
+        $stmt->execute([$idcustomer]);
+        echo json_encode(['success' => true, 'idcustomer' => $idcustomer]);
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     }
 }
 

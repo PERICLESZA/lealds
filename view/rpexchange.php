@@ -92,7 +92,10 @@ $totalPay = 0;
 <body>
 
     <div class="dashboard-container">
-        <h2>Exchange Chronological Report</h2>
+        <h2>Exchange Chronological Report - 
+            <?= date('d/m/Y', strtotime($dataInicio)) ?> a
+            <?= date('d/m/Y', strtotime($dataFim)) ?>
+        </h2>
 
         <form method="get" class="form-container">
             <div class="cad-group">
@@ -128,12 +131,6 @@ $totalPay = 0;
             <button type="submit">Filter</button>
         </form>
 
-        <h3 style="text-align:center;">
-            Range
-            <?= date('d/m/Y', strtotime($dataInicio)) ?> a
-            <?= date('d/m/Y', strtotime($dataFim)) ?>
-        </h3>
-
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -164,7 +161,7 @@ $totalPay = 0;
                         $totalReceive += (float) $row['totalflow'];
                         $totalPay += (float) $row['totaltopay'];
                         ?>
-                        <tr class="<?= ($row['fk_idstatus'] == 4 || $row['fk_idstatus'] == 5) ? 'red-row' : '' ?>">
+                        <tr class="<?= ($row['fk_idstatus'] == 4 || $row['fk_idstatus'] == 5 || $row['fk_idstatus'] == 7) ? 'red-row' : '' ?>">
                             <td style="text-align:left;"><?= htmlspecialchars($row['name'] ?? '') ?></td>
                             <td><?= $row['dtcashflow'] ?></td>
                             <td><?= !empty($row['tchaflow']) ? date('H:i', strtotime($row['tchaflow'])) : '' ?></td>

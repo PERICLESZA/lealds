@@ -124,7 +124,7 @@
                         <th>Phone</th>
                         <th>City</th>
                         <th>State</th>
-                        <th>Active'</th>
+                        <th>Active</th>
                         <th>Del</th>
                     </tr>
                 </thead>
